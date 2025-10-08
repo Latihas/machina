@@ -6,9 +6,9 @@
     </PropertyGroup>
     
     <PropertyGroup>
-        <Version>2.4.3.1</Version>
-        <AssemblyVersion>2.4.3.1</AssemblyVersion>
-        <FileVersion>2.4.3.1</FileVersion>
+        <Version>2.4.4.0</Version>
+        <AssemblyVersion>2.4.4.0</AssemblyVersion>
+        <FileVersion>2.4.4.0</FileVersion>
         <EnableNETAnalyzers>true</EnableNETAnalyzers>
         <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -41,6 +41,7 @@
     <ItemGroup>
         <None Remove="Ravahn.Machina.Keyfile.snk" />
         <None Remove="Deucalion\Distrib\deucalion-1.2.1.dll" />
+        <None Remove="Deucalion\Distrib\deucalion-1.4.0.dll" />
       <None Remove="Ravahn.Machina.Keyfile.snk" />
     </ItemGroup>
 

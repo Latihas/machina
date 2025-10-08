@@ -46,6 +46,7 @@ namespace Machina.FFXIV.Headers
         public static readonly Server_MessageType PresetWaymark = Opcodes.OpcodeManager.Instance.CurrentOpcodes["PresetWaymark"];
         public static readonly Server_MessageType Waymark = Opcodes.OpcodeManager.Instance.CurrentOpcodes["Waymark"];
         public static readonly Server_MessageType SystemLogMessage = Opcodes.OpcodeManager.Instance.CurrentOpcodes["SystemLogMessage"];
+        public static readonly Server_MessageType StatusEffectListForay3 = Opcodes.OpcodeManager.Instance.CurrentOpcodes["StatusEffectListForay3"];
 
         public ushort InternalValue { get; private set; }
 
