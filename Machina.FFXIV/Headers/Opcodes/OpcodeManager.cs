@@ -47,31 +47,37 @@ namespace Machina.FFXIV.Headers.Opcodes
                 string regionString = resource.Substring(resource.IndexOf(".Opcodes.", StringComparison.InvariantCulture) + 9, resource.LastIndexOf('.') - resource.IndexOf(".Opcodes.", StringComparison.InvariantCulture) - 9);
                 if (!Enum.TryParse(regionString, out GameRegion gameRegion))
                     continue;
-
                 using (Stream stream = assembly.GetManifestResourceStream(resource))
                 {
                     using (StreamReader sr = new StreamReader(stream))
-                    {
-                        string[][] data = sr.ReadToEnd()
-                            .Split(new string[] { "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries)
-                            .Select(x => x.Split(new string[] { "|" }, StringSplitOptions.RemoveEmptyEntries)).ToArray();
-
-                        Dictionary<string, ushort> dict = data.ToDictionary(
-                            x => x[0].Trim(),
-                            x => Convert.ToUInt16(x[1].Trim(), 16));
-
-                        _opcodes.Add(gameRegion, dict);
-                    }
+                        _opcodes[gameRegion]= ConvertOpCode(sr.ReadToEnd());
                 }
-
             }
         }
-        public void SetRegion(GameRegion region)
+
+        public static Dictionary<string, ushort> ConvertOpCode(string content)
+        {
+            string[][] data = content
+                              .Split(new string[] { "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries)
+                              .Select(x => x.Split(new string[] { "|" }, StringSplitOptions.RemoveEmptyEntries)).ToArray();
+
+            Dictionary<string, ushort> dict = data.ToDictionary(
+                x => x[0].Trim(),
+                x => Convert.ToUInt16(x[1].Trim(), 16));
+            return dict;
+        }
+        public void SetRegion(GameRegion region,string extraOpcodes=null)
         {
             if (!_opcodes.ContainsKey(region))
                 region = GameRegion.Global;
 
             GameRegion = region;
+            if (extraOpcodes != null)
+            {
+                foreach (KeyValuePair<string, ushort> p in ConvertOpCode(extraOpcodes))
+                foreach (GameRegion g in _opcodes.Keys)
+                    _opcodes[g][p.Key] = p.Value;
+            }
             CurrentOpcodes = _opcodes[GameRegion];
 
             System.Diagnostics.Trace.WriteLine($"Using FFXIV Opcodes for game region {region}", "Machina");
