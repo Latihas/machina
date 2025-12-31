@@ -18,66 +18,62 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace Machina.FFXIV.Headers.Opcodes
-{
-    public class OpcodeManager
-    {
+namespace Machina.FFXIV.Headers.Opcodes {
+    public class OpcodeManager {
         public static OpcodeManager Instance { get; } = new OpcodeManager();
 
-        private readonly Dictionary<GameRegion, Dictionary<string, ushort>> _opcodes;
+        public readonly Dictionary<GameRegion, Dictionary<string, ushort>> _opcodes;
 
         public Dictionary<string, ushort> CurrentOpcodes { get; set; }
 
         public GameRegion GameRegion { get; private set; }
 
-        public OpcodeManager()
-        {
+        public OpcodeManager() {
             _opcodes = new Dictionary<GameRegion, Dictionary<string, ushort>>();
             LoadVersions();
         }
 
-        private void LoadVersions()
-        {
+        private void LoadVersions() {
             System.Reflection.Assembly assembly = typeof(OpcodeManager).Assembly;
-            foreach (string resource in assembly.GetManifestResourceNames())
-            {
+            foreach (string resource in assembly.GetManifestResourceNames()) {
                 if (!resource.Contains(".Opcodes."))
                     continue;
 
                 string regionString = resource.Substring(resource.IndexOf(".Opcodes.", StringComparison.InvariantCulture) + 9, resource.LastIndexOf('.') - resource.IndexOf(".Opcodes.", StringComparison.InvariantCulture) - 9);
                 if (!Enum.TryParse(regionString, out GameRegion gameRegion))
                     continue;
-                using (Stream stream = assembly.GetManifestResourceStream(resource))
-                {
+                using (Stream stream = assembly.GetManifestResourceStream(resource)) {
                     using (StreamReader sr = new StreamReader(stream))
-                        _opcodes[gameRegion]= ConvertOpCode(sr.ReadToEnd());
+                        _opcodes[gameRegion] = ConvertOpCode(sr.ReadToEnd());
                 }
             }
         }
 
-        public static Dictionary<string, ushort> ConvertOpCode(string content)
-        {
+        public static Dictionary<string, ushort> ConvertOpCode(string content) {
             string[][] data = content
-                              .Split(new string[] { "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries)
-                              .Select(x => x.Split(new string[] { "|" }, StringSplitOptions.RemoveEmptyEntries)).ToArray();
+                .Split(new string[] {
+                    "\r", "\n"
+                }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(x => x.Split(new string[] {
+                    "|"
+                }, StringSplitOptions.RemoveEmptyEntries)).ToArray();
 
             Dictionary<string, ushort> dict = data.ToDictionary(
                 x => x[0].Trim(),
                 x => Convert.ToUInt16(x[1].Trim(), 16));
             return dict;
         }
-        public void SetRegion(GameRegion region,string extraOpcodes=null)
-        {
+
+        public void SetRegion(GameRegion region) => SetRegion(region, null);
+
+        public void SetRegion(GameRegion region, Dictionary<string, ushort> extraOpcodes) {
             if (!_opcodes.ContainsKey(region))
                 region = GameRegion.Global;
 
             GameRegion = region;
             if (extraOpcodes != null)
-            {
-                foreach (KeyValuePair<string, ushort> p in ConvertOpCode(extraOpcodes))
-                foreach (GameRegion g in _opcodes.Keys)
-                    _opcodes[g][p.Key] = p.Value;
-            }
+                foreach (KeyValuePair<string, ushort> p in extraOpcodes)
+                    _opcodes[GameRegion][p.Key] = p.Value;
             CurrentOpcodes = _opcodes[GameRegion];
 
             System.Diagnostics.Trace.WriteLine($"Using FFXIV Opcodes for game region {region}", "Machina");
