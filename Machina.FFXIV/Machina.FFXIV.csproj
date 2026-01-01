@@ -4,37 +4,9 @@
         <Version>2.4.4.0</Version>
         <AssemblyVersion>2.4.4.0</AssemblyVersion>
         <FileVersion>2.4.4.0</FileVersion>
-        <EnableNETAnalyzers>true</EnableNETAnalyzers>
-        <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-        <NoWarn>1701;1702;CS0649;IDE0073</NoWarn>
-        <PlatformTarget>x64</PlatformTarget>
         <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     </PropertyGroup>
-    
-    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'NuGet|AnyCPU' ">
-        <SignAssembly>true</SignAssembly>
-        <AssemblyOriginatorKeyFile>Ravahn.Machina.Keyfile.snk</AssemblyOriginatorKeyFile>
-        <PackageId>Machina.FFXIV</PackageId>
-        <DelaySign>false</DelaySign>
-        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-        <Authors>Ravahn</Authors>
-        <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
-        <RepositoryUrl>https://github.com/ravahn/machina</RepositoryUrl>
-        <NeutralLanguage>en</NeutralLanguage>
-        <Description>Extension to Machina network library to support decoding of Final Fantasy XIV network data</Description>
-        <Copyright>Copyright © 2025 Ravahn</Copyright>
-        <PackageProjectUrl>https://github.com/ravahn/machina</PackageProjectUrl>
-        <PackageReadmeFile>README.md</PackageReadmeFile>
-    </PropertyGroup>
- 
-    <ItemGroup>
-        <None Remove="Ravahn.Machina.Keyfile.snk" />
-        <None Remove="Deucalion\Distrib\deucalion-1.2.1.dll" />
-        <None Remove="Deucalion\Distrib\deucalion-1.4.0.dll" />
-      <None Remove="Ravahn.Machina.Keyfile.snk" />
-    </ItemGroup>
 
     <ItemGroup>
         <EmbeddedResource Include="Headers\Opcodes\Chinese.txt" />
@@ -44,16 +16,5 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Machina\Machina.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <None Include="..\LICENSE.md">
-            <Pack>True</Pack>
-            <PackagePath></PackagePath>
-        </None>
-        <None Include="..\README.md">
-            <Pack>True</Pack>
-            <PackagePath></PackagePath>
-        </None>
     </ItemGroup>
 </Project>
