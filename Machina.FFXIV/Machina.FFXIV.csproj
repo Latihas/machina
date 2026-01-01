@@ -7,13 +7,12 @@
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     </PropertyGroup>
-
     <ItemGroup>
         <EmbeddedResource Include="Headers\Opcodes\Chinese.txt" />
         <EmbeddedResource Include="Headers\Opcodes\Global.txt" />
+        <EmbeddedResource Include="Headers\Opcodes\Tc.txt" />
         <EmbeddedResource Include="Headers\Opcodes\Korean.txt" />
     </ItemGroup>
-
     <ItemGroup>
         <ProjectReference Include="..\Machina\Machina.csproj" />
     </ItemGroup>
