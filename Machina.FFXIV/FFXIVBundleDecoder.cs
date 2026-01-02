@@ -17,8 +17,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.IO.Compression;
 using Machina.FFXIV.Headers;
+using Machina.FFXIV.Oodle;
 using Machina.Infrastructure;
 
 namespace Machina.FFXIV
@@ -29,7 +31,7 @@ namespace Machina.FFXIV
         private readonly byte[] _decompressionBuffer = new byte[1024 * 128];
         private int _allocated;
 
-        private Oodle.IOodleWrapper _oodle;
+        private IOodleWrapper _oodle;
 
         public Queue<Tuple<long, byte[]>> Messages = new Queue<Tuple<long, byte[]>>(20);
 
@@ -149,7 +151,7 @@ namespace Machina.FFXIV
             }
         }
 
-        public unsafe Tuple<long, byte[]> GetNextFFXIVMessage()
+        public Tuple<long, byte[]> GetNextFFXIVMessage()
         {
             return Messages.Count > 0 ? Messages.Dequeue() : null;
         }
@@ -178,7 +180,7 @@ namespace Machina.FFXIV
                     {
                         // inflate the packet using built-in .net function.  Note that the first two bytes of the data are skipped, since this 
                         //  appears to be a standard zlib deflated buffer
-                        System.IO.MemoryStream ms = new System.IO.MemoryStream(buffer, offset + 42, (int)header.length - 42);
+                        MemoryStream ms = new MemoryStream(buffer, offset + 42, (int)header.length - 42);
                         using (DeflateStream ds = new DeflateStream(ms, CompressionMode.Decompress))
                         {
                             // todo: need more graceful way of determing decompressed size!
@@ -187,7 +189,7 @@ namespace Machina.FFXIV
                     }
                     catch (Exception ex)
                     {
-                        Trace.WriteLine("FFXIVBundleDecoder: Decompression error: " + ex.ToString(), "DEBUG-MACHINA");
+                        Trace.WriteLine("FFXIVBundleDecoder: Decompression error: " + ex, "DEBUG-MACHINA");
                         return null;
                     }
 
@@ -197,7 +199,7 @@ namespace Machina.FFXIV
                     {
                         if (_oodle == null)
                         {
-                            _oodle = Oodle.OodleFactory.Create();
+                            _oodle = OodleFactory.Create();
                         }
 
                         bool success = _oodle.Decompress(
@@ -218,7 +220,7 @@ namespace Machina.FFXIV
                     }
                     catch (Exception ex)
                     {
-                        Trace.WriteLine("FFXIVBundleDecoder: Oodle Decompression error: " + ex.ToString(), "DEBUG-MACHINA");
+                        Trace.WriteLine("FFXIVBundleDecoder: Oodle Decompression error: " + ex, "DEBUG-MACHINA");
                         return null;
                     }
                     break;
@@ -232,7 +234,7 @@ namespace Machina.FFXIV
             return _decompressionBuffer;
         }
 
-        private unsafe int ResetStream(int offset)
+        private int ResetStream(int offset)
         {
             offset = GetNextMagicNumberPos(_bundleBuffer, offset);
             if (offset == -1)

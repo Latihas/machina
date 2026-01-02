@@ -12,6 +12,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see<http://www.gnu.org/licenses/>.
+
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -258,7 +259,7 @@ namespace Machina.FFXIV.Deucalion
                     filenameBytes,
                     (uint)(filenameBytes.Length + 2),
                     out UIntPtr bytesWritten);
-                if (result == false || bytesWritten == UIntPtr.Zero)
+                if (!result || bytesWritten == UIntPtr.Zero)
                 {
                     LastInjectionError = $"DeucalionInjector: Unable to write filename to memory in process id {processId}.";
                     Trace.WriteLine(LastInjectionError, "DEBUG-MACHINA");
@@ -294,7 +295,7 @@ namespace Machina.FFXIV.Deucalion
             }
         }
 
-        private static unsafe bool UpdateProcessDACL(int processId)
+        private static bool UpdateProcessDACL(int processId)
         {
             IntPtr pSecurityDescriptor = IntPtr.Zero;
             IntPtr procHandle = IntPtr.Zero;

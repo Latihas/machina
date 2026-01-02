@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using System.Net;
 using Machina.FFXIV.Dalamud;
 using Machina.FFXIV.Deucalion;
+using Machina.FFXIV.Oodle;
 using Machina.Infrastructure;
 
 namespace Machina.FFXIV
@@ -78,8 +79,8 @@ namespace Machina.FFXIV
         /// <summary>
         /// the type of Oodle implementation to use - for most cases it should be FfxivTcp
         /// </summary>
-        public Oodle.OodleImplementation OodleImplementation
-        { get; set; } = Oodle.OodleImplementation.FfxivTcp;
+        public OodleImplementation OodleImplementation
+        { get; set; } = OodleImplementation.FfxivTcp;
 
         public string OodlePath
         { get; set; } = @"C:\Program Files (x86)\FINAL FANTASY XIV - A Realm Reborn\game\ffxiv_dx11.exe";
@@ -161,7 +162,7 @@ namespace Machina.FFXIV
 
                 // We are replacing Deucalion with Dalamud here, while leaving the Machina.FFXIV API intact
                 _dalamudClient = new DalamudClient();
-                _dalamudClient.MessageReceived = (long epoch, byte[] message) => ProcessDalamudMessage(epoch, message);
+                _dalamudClient.MessageReceived = (epoch, message) => ProcessDalamudMessage(epoch, message);
                 _dalamudClient.Connect();
             }
             else
@@ -176,10 +177,10 @@ namespace Machina.FFXIV
                 _monitor.Config.UseRemoteIpFilter = UseRemoteIpFilter;
                 _monitor.Config.RPCap = RPCap;
 
-                _monitor.DataSentEventHandler = (TCPConnection connection, byte[] data) => ProcessSentMessage(connection, data);
-                _monitor.DataReceivedEventHandler = (TCPConnection connection, byte[] data) => ProcessReceivedMessage(connection, data);
+                _monitor.DataSentEventHandler = (connection, data) => ProcessSentMessage(connection, data);
+                _monitor.DataReceivedEventHandler = (connection, data) => ProcessReceivedMessage(connection, data);
 
-                Oodle.OodleFactory.SetImplementation(OodleImplementation, OodlePath);
+                OodleFactory.SetImplementation(OodleImplementation, OodlePath);
                 _monitor.Start();
             }
         }

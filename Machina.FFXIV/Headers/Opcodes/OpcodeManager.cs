@@ -15,8 +15,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 
 namespace Machina.FFXIV.Headers.Opcodes {
     public class OpcodeManager {
@@ -34,7 +36,7 @@ namespace Machina.FFXIV.Headers.Opcodes {
         }
 
         private void LoadVersions() {
-            System.Reflection.Assembly assembly = typeof(OpcodeManager).Assembly;
+            Assembly assembly = typeof(OpcodeManager).Assembly;
             foreach (string resource in assembly.GetManifestResourceNames()) {
                 if (!resource.Contains(".Opcodes."))
                     continue;
@@ -51,10 +53,10 @@ namespace Machina.FFXIV.Headers.Opcodes {
 
         public static Dictionary<string, ushort> ConvertOpCode(string content) {
             string[][] data = content
-                .Split(new string[] {
+                .Split(new[] {
                     "\r", "\n"
                 }, StringSplitOptions.RemoveEmptyEntries)
-                .Select(x => x.Split(new string[] {
+                .Select(x => x.Split(new[] {
                     "|"
                 }, StringSplitOptions.RemoveEmptyEntries)).ToArray();
 
@@ -76,7 +78,7 @@ namespace Machina.FFXIV.Headers.Opcodes {
                     _opcodes[GameRegion][p.Key] = p.Value;
             CurrentOpcodes = _opcodes[GameRegion];
 
-            System.Diagnostics.Trace.WriteLine($"Using FFXIV Opcodes for game region {region}", "Machina");
+            Trace.WriteLine($"Using FFXIV Opcodes for game region {region}", "Machina");
         }
     }
 }

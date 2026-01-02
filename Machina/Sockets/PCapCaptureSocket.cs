@@ -17,6 +17,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Runtime.InteropServices;
@@ -57,7 +58,7 @@ namespace Machina.Sockets
         private string BuildSource(string host, int port)
         {
             if (!string.IsNullOrEmpty(_file))
-                return new StringBuilder($"file://{System.IO.Path.GetDirectoryName(_file)}", PCAP_BUF_SIZE).ToString();
+                return new StringBuilder($"file://{Path.GetDirectoryName(_file)}", PCAP_BUF_SIZE).ToString();
             StringBuilder source = new StringBuilder("rpcap://", PCAP_BUF_SIZE);
             if (string.IsNullOrEmpty(host))
                 return source.ToString();
@@ -90,7 +91,7 @@ namespace Machina.Sockets
                 device = devices.FirstOrDefault();
                 if (string.IsNullOrWhiteSpace(device?.Name))
                 {
-                    Trace.WriteLine($"PCapCaptureSocket: Cannot find any WinPCap devices.", "DEBUG-MACHINA");
+                    Trace.WriteLine("PCapCaptureSocket: Cannot find any WinPCap devices.", "DEBUG-MACHINA");
                     return null;
                 }
                 Trace.WriteLine($"PCapCaptureSocket: Using pcap interface [{device.Name}] as fallback.", "DEBUG-MACHINA");
@@ -108,13 +109,13 @@ namespace Machina.Sockets
 
             string filterText = "ip and tcp";
             if (remoteAddress > 0)
-                filterText += " and host " + new IPAddress(remoteAddress).ToString();
+                filterText += " and host " + new IPAddress(remoteAddress);
 
             bpf_program filter = new bpf_program();
 
             try
             {
-                _activeDevice = new PcapDeviceState()
+                _activeDevice = new PcapDeviceState
                 {
                     Device = device,
                     Handle = IntPtr.Zero
@@ -212,7 +213,7 @@ namespace Machina.Sockets
                     int status = pcap_next_ex(_activeDevice.Handle, ref packetHeaderPtr, ref packetDataPtr);
                     if (status == 0) // 100ms timeout
                         continue;
-                    else if (status == -1) // error
+                    if (status == -1) // error
                     {
                         string error = Marshal.PtrToStringAnsi(pcap_geterr(_activeDevice.Handle));
                         if (!bExceptionLogged)
@@ -262,7 +263,7 @@ namespace Machina.Sockets
                 catch (Exception ex)
                 {
                     if (!bExceptionLogged)
-                        Trace.WriteLine("PCapCaptureSocket: Exception during RunCaptureLoop. " + ex.ToString(), "DEBUG-MACHINA");
+                        Trace.WriteLine("PCapCaptureSocket: Exception during RunCaptureLoop. " + ex, "DEBUG-MACHINA");
 
                     bExceptionLogged = true;
 

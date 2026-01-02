@@ -63,8 +63,7 @@ namespace Machina.FFXIV.Oodle
                         Trace.WriteLine($"{nameof(OodleNative_Library)}: Cannot load oodle library at path {path}.", "DEBUG-MACHINA");
                         return;
                     }
-                    else
-                        Trace.WriteLine($"{nameof(OodleNative_Library)}: Loaded oodle library from path {path}.", "DEBUG-MACHINA");
+                    Trace.WriteLine($"{nameof(OodleNative_Library)}: Loaded oodle library from path {path}.", "DEBUG-MACHINA");
 
                     IntPtr address = NativeMethods.GetProcAddress(_libraryHandle, nameof(OodleNetwork1UDP_State_Size));
                     _OodleNetwork1UDP_State_Size = (OodleNetwork1UDP_State_Size_Func)Marshal.GetDelegateForFunctionPointer(

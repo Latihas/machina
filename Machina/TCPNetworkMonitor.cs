@@ -136,7 +136,7 @@ namespace Machina
                     catch (Exception ex)
                     {
                         if (DateTime.UtcNow.Subtract(_lastLoopError).TotalSeconds > 5)
-                            Trace.WriteLine("TCPNetworkMonitor Error in ProcessDataLoop inner code: " + ex.ToString(), "DEBUG-MACHINA");
+                            Trace.WriteLine("TCPNetworkMonitor Error in ProcessDataLoop inner code: " + ex, "DEBUG-MACHINA");
                         _lastLoopError = DateTime.UtcNow;
                     }
 
@@ -149,7 +149,7 @@ namespace Machina
             }
             catch (Exception ex)
             {
-                Trace.WriteLine("TCPNetworkMonitor Error in ProcessDataLoop: " + ex.ToString(), "DEBUG-MACHINA");
+                Trace.WriteLine("TCPNetworkMonitor Error in ProcessDataLoop: " + ex, "DEBUG-MACHINA");
             }
         }
 

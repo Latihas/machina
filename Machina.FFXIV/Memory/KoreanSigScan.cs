@@ -19,7 +19,7 @@ namespace Machina.FFXIV.Memory
 {
     public class KoreanSigScan : SigScan
     {
-        protected override Dictionary<SignatureType, int[]> Signatures => new Dictionary<SignatureType, int[]>()
+        protected override Dictionary<SignatureType, int[]> Signatures => new Dictionary<SignatureType, int[]>
         {
             { SignatureType.OodleNetwork1_Shared_Size, SignatureStringToByteArray("48 83 7b ** 00 75 ** b9 11 00 00 00 e8") },
             { SignatureType.OodleNetwork1_Shared_SetWindow, SignatureStringToByteArray("4c 8b 43 ** 41 b9 00 00 10 00 ba ** 00 00 00 48 89 43 ** 48 8b c8 e8") },

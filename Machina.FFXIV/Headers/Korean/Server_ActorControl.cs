@@ -32,7 +32,7 @@ namespace Machina.FFXIV.Headers.Korean
         DirectorUpdate = 0x6d,
         SetTargetSign = 0x1f6,
         LimitBreak = 0x1f9
-    };
+    }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct Server_ActorControl

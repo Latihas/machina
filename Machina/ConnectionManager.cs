@@ -61,7 +61,7 @@ namespace Machina
                     // set up socket
                     connection.Socket = Config.MonitorType == NetworkMonitorType.WinPCap ?
                         new PCapCaptureSocket(Config.RPCap) :
-                        (ICaptureSocket)new RawCaptureSocket();
+                        new RawCaptureSocket();
 
                     connection.Socket.StartCapture(connection.LocalIP, Config.UseRemoteIpFilter ? connection.RemoteIP : 0);
                 }
@@ -74,9 +74,9 @@ namespace Machina
             {
                 if (Connections[i].Socket != null)
                 {
-                    Trace.WriteLine("TCPNetworkMonitor: Stopping " + Config.MonitorType.ToString() + " listener between [" +
-                        new IPAddress(Connections[i].LocalIP).ToString() + "] => [" +
-                        new IPAddress(Connections[i].RemoteIP).ToString() + "].", "DEBUG-MACHINA");
+                    Trace.WriteLine("TCPNetworkMonitor: Stopping " + Config.MonitorType + " listener between [" +
+                        new IPAddress(Connections[i].LocalIP) + "] => [" +
+                        new IPAddress(Connections[i].RemoteIP) + "].", "DEBUG-MACHINA");
 
                     Connections[i].Socket.StopCapture();
                     Connections[i].Socket?.Dispose();

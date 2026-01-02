@@ -15,11 +15,10 @@
 
 using System.Runtime.InteropServices;
 
-
 namespace Machina.FFXIV.Headers
 {
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public unsafe struct Server_EffectResultBasic
+    public struct Server_EffectResultBasic
     {
         public Server_MessageHeader MessageHeader; // 8 DWORDS
         public uint Unknown1;

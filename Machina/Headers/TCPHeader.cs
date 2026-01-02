@@ -31,7 +31,7 @@ namespace Machina.Headers
         ECE = 0x40,
         CWR = 0x80,
         NS = 0x100
-    };
+    }
 
     [StructLayout(LayoutKind.Explicit)]
     public struct TCPHeader

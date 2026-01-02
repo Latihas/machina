@@ -18,13 +18,13 @@ using System.Runtime.InteropServices;
 namespace Machina.FFXIV.Headers.Tc
 {
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public unsafe struct Server_Waymark
+    public struct Server_Waymark
     {
         public enum WaymarkStatus : byte
         {
             Off = 0,
             On = 1
-        };
+        }
         public Server_MessageHeader MessageHeader; // 8 DWORDS
         public WaymarkType Waymark;
         public WaymarkStatus Status;

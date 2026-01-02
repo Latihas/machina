@@ -105,7 +105,7 @@ namespace Machina.FFXIV.Oodle
                         return;
 
                     // Copy file to temp directory
-                    _libraryTempPath = Path.Combine(Path.GetTempPath(), "Machina.FFXIV", Guid.NewGuid().ToString() + ".exe");
+                    _libraryTempPath = Path.Combine(Path.GetTempPath(), "Machina.FFXIV", Guid.NewGuid() + ".exe");
 
                     if (!Directory.Exists(_libraryTempPath.Substring(0, _libraryTempPath.LastIndexOf("\\", StringComparison.Ordinal) + 1)))
                         _ = Directory.CreateDirectory(_libraryTempPath.Substring(0, _libraryTempPath.LastIndexOf("\\", StringComparison.Ordinal) + 1));
@@ -118,13 +118,12 @@ namespace Machina.FFXIV.Oodle
                         Trace.WriteLine($"{nameof(OodleNative_Ffxiv)}: Cannot load ffxiv_dx11 executable at path {path}.", "DEBUG-MACHINA");
                         return;
                     }
-                    else
-                        Trace.WriteLine($"{nameof(OodleNative_Ffxiv)}: Copied and loaded ffxiv_dx11 executable into ACT memory from path {path}.", "DEBUG-MACHINA");
+                    Trace.WriteLine($"{nameof(OodleNative_Ffxiv)}: Copied and loaded ffxiv_dx11 executable into ACT memory from path {path}.", "DEBUG-MACHINA");
 
                     _offsets = _sigscan.Read(_libraryHandle);
 
-                    _OodleMalloc = new OodleMalloc_Func(AllocAlignedMemory);
-                    _OodleFree = new OodleFree_Action(FreeAlignedMemory);
+                    _OodleMalloc = AllocAlignedMemory;
+                    _OodleFree = FreeAlignedMemory;
 
                     IntPtr myMallocPtr = Marshal.GetFunctionPointerForDelegate(_OodleMalloc);
                     IntPtr myFreePtr = Marshal.GetFunctionPointerForDelegate(_OodleFree);

@@ -120,7 +120,7 @@ namespace Machina.Decoders
 
                         continue;
                     }
-                    else if (version != 4)
+                    if (version != 4)
                     {
                         Trace.WriteLine($"IPDecoder: IP protocol version is neither 4 nor 6. Version is {version}", "DEBUG-MACHINA");
                         return;

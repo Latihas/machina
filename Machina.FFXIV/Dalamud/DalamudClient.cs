@@ -1,8 +1,8 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Collections.Concurrent;
 
 namespace Machina.FFXIV.Dalamud
 {
@@ -54,7 +54,7 @@ namespace Machina.FFXIV.Dalamud
                     catch (Exception ex)
                     {
                         if (DateTime.UtcNow.Subtract(_lastLoopError).TotalSeconds > 5)
-                            Trace.WriteLine("DalamudClient: Error in inner ProcessReadLoop. " + ex.ToString(), "DEBUG-MACHINA");
+                            Trace.WriteLine("DalamudClient: Error in inner ProcessReadLoop. " + ex, "DEBUG-MACHINA");
                         _lastLoopError = DateTime.UtcNow;
                     }
 
@@ -66,7 +66,7 @@ namespace Machina.FFXIV.Dalamud
             }
             catch (Exception ex)
             {
-                Trace.WriteLine("DalamudClient: Error in outer ProcessReadLoop. " + ex.ToString(), "DEBUG-MACHINA");
+                Trace.WriteLine("DalamudClient: Error in outer ProcessReadLoop. " + ex, "DEBUG-MACHINA");
             }
         }
 

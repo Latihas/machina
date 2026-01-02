@@ -15,6 +15,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Net;
 using System.Net.NetworkInformation;
@@ -130,7 +131,7 @@ namespace Machina.Infrastructure
         ///   and updates the connections collection.
         /// </summary>
         /// <param name="connections">List containing prior connections that needs to be maintained</param>
-        public unsafe void UpdateTCPIPConnections(IList<TCPConnection> connections)
+        public void UpdateTCPIPConnections(IList<TCPConnection> connections)
         {
             List<uint> _processFilterList = new List<uint>();
 
@@ -217,7 +218,7 @@ namespace Machina.Infrastructure
 
                             if (!bFound && entry.dwLocalAddr != 0)
                             {
-                                TCPConnection connection = new TCPConnection()
+                                TCPConnection connection = new TCPConnection
                                 {
                                     LocalIP = entry.dwLocalAddr,
                                     RemoteIP = entry.dwRemoteAddr,
@@ -274,13 +275,13 @@ namespace Machina.Infrastructure
                 else
                 {
                     Trace.WriteLine($"ProcessTCPInfo: Unable to retrieve TCP table. Return code: {ret}", "DEBUG-MACHINA");
-                    throw new System.ComponentModel.Win32Exception(ret);
+                    throw new Win32Exception(ret);
                 }
             }
             catch (Exception ex)
             {
-                Trace.WriteLine("ProcessTCPInfo: Exception updating TCP connection list." + ex.ToString(), "DEBUG-MACHINA");
-                throw new System.ComponentModel.Win32Exception(ret, ex.Message);
+                Trace.WriteLine("ProcessTCPInfo: Exception updating TCP connection list." + ex, "DEBUG-MACHINA");
+                throw new Win32Exception(ret, ex.Message);
             }
             finally
             {

@@ -53,7 +53,7 @@ namespace Machina.Infrastructure
                 .Select(x => x.GetIPProperties())
                 .SelectMany(x => x.UnicastAddresses)
                 .Select(x => x.Address)
-                .Where(x => x.IsIPv6LinkLocal == false)
+                .Where(x => !x.IsIPv6LinkLocal)
                 .Where(x => (x.ToString() ?? "").Contains('.'))
                 .ToArray();
 

@@ -39,7 +39,7 @@ namespace Machina.FFXIV.Memory
 
     public class SigScan : ISigScan
     {
-        protected virtual Dictionary<SignatureType, int[]> Signatures => new Dictionary<SignatureType, int[]>()
+        protected virtual Dictionary<SignatureType, int[]> Signatures => new Dictionary<SignatureType, int[]>
         {
             { SignatureType.OodleNetwork1_Shared_Size, SignatureStringToByteArray("48 83 7b ** 00 75 ** b9 11 00 00 00 e8") },
             { SignatureType.OodleNetwork1_Shared_SetWindow, SignatureStringToByteArray("4c 8b 43 ** 41 b9 00 00 10 00 ba ** 00 00 00 48 89 43 ** 48 8b c8 e8") },
@@ -137,7 +137,7 @@ namespace Machina.FFXIV.Memory
             // NOTE: 64-bit uses relative instruction pointer (RIP).
 
             // relative offset is only 32-bits
-            matchAddress = (IntPtr)Marshal.ReadInt32(IntPtr.Add(currentAddress, startIndex));
+            matchAddress = Marshal.ReadInt32(IntPtr.Add(currentAddress, startIndex));
 
             // add onto current address.
             matchAddress = new IntPtr(currentAddress.ToInt64() + startIndex + sizeof(int) + matchAddress.ToInt64());

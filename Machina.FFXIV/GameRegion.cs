@@ -21,5 +21,5 @@ namespace Machina.FFXIV
         Chinese = 2,
         Korean = 3,
         Tc = 4
-    };
+    }
 }

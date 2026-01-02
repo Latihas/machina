@@ -12,6 +12,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see<http://www.gnu.org/licenses/>.
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -79,7 +80,7 @@ namespace Machina.FFXIV.Deucalion
             /// </summary>
             SendOther = 7
 
-        };
+        }
 
         private enum DeucalionFilter : byte
         {
@@ -179,7 +180,7 @@ namespace Machina.FFXIV.Deucalion
             MessageSent?.Invoke(message);
         }
 
-        public unsafe void Connect(int processId)
+        public void Connect(int processId)
         {
             try
             {
@@ -215,9 +216,9 @@ namespace Machina.FFXIV.Deucalion
                 }
 
                 // Set opcode filter to get recv/send for zone packets.  Assume it was processed successfully.
-                WritePipe(new DeucalionMessage()
+                WritePipe(new DeucalionMessage
                 {
-                    header = new DeucalionHeader()
+                    header = new DeucalionHeader
                     {
                         channel = (DeucalionChannel)(DeucalionFilter.AllowReceivedZone | DeucalionFilter.AllowSentZone),
                         Opcode = DeucalionOpcode.Option
@@ -244,9 +245,9 @@ namespace Machina.FFXIV.Deucalion
                 }
 
                 // Set client nickname.  Also assume it was processed successfully.
-                WritePipe(new DeucalionMessage()
+                WritePipe(new DeucalionMessage
                 {
-                    header = new DeucalionHeader()
+                    header = new DeucalionHeader
                     {
                         channel = (DeucalionChannel)9000,
                         Opcode = DeucalionOpcode.Debug
@@ -279,9 +280,9 @@ namespace Machina.FFXIV.Deucalion
                         if (DateTime.Now.Subtract(lastClientPing).TotalMilliseconds > 1000)
                         {
                             lastClientPing = DateTime.Now;
-                            WritePipe(new DeucalionMessage()
+                            WritePipe(new DeucalionMessage
                             {
-                                header = new DeucalionHeader()
+                                header = new DeucalionHeader
                                 {
                                     channel = DeucalionChannel.Zone,
                                     Opcode = DeucalionOpcode.Ping
@@ -313,7 +314,7 @@ namespace Machina.FFXIV.Deucalion
                     catch (Exception ex)
                     {
                         if (DateTime.UtcNow.Subtract(_lastLoopError).TotalSeconds > 5)
-                            Trace.WriteLine("DeucalionClient: Error in inner ProcessReadLoop. " + ex.ToString(), "DEBUG-MACHINA");
+                            Trace.WriteLine("DeucalionClient: Error in inner ProcessReadLoop. " + ex, "DEBUG-MACHINA");
                         _lastLoopError = DateTime.UtcNow;
                     }
 
@@ -325,7 +326,7 @@ namespace Machina.FFXIV.Deucalion
             }
             catch (Exception ex)
             {
-                Trace.WriteLine("DeucalionClient Error in outer ProcessReadLoop. " + ex.ToString(), "DEBUG-MACHINA");
+                Trace.WriteLine("DeucalionClient Error in outer ProcessReadLoop. " + ex, "DEBUG-MACHINA");
             }
         }
 
@@ -353,7 +354,7 @@ namespace Machina.FFXIV.Deucalion
             if (_streamBufferIndex + read > _streamBuffer.Length)
             {
                 // buffer is full, but length suggests more data needed.  Reset stream.
-                Trace.WriteLine($"DeucalionClient: Stream Buffer is full.  Discarding data and resetting stream.", "DEBUG-MACHINA");
+                Trace.WriteLine("DeucalionClient: Stream Buffer is full.  Discarding data and resetting stream.", "DEBUG-MACHINA");
                 _streamBufferIndex = 0;
                 return response.ToArray();
             }
@@ -387,7 +388,7 @@ namespace Machina.FFXIV.Deucalion
                     }
 
                     // convert remaining payload to message, if any
-                    DeucalionMessage newMessage = new DeucalionMessage()
+                    DeucalionMessage newMessage = new DeucalionMessage
                     {
                         header = *messagePtr,
                         data = messagePtr->Length > sizeof(DeucalionHeader) ? new byte[messagePtr->Length - sizeof(DeucalionHeader)] : Array.Empty<byte>(),

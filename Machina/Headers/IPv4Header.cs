@@ -23,14 +23,14 @@ namespace Machina.Headers
         ICMP = 1,
         TCP = 6,
         UDP = 17
-    };
+    }
 
     public enum IPFragment : byte
     {
         Reserved = 1, // must be zero
         MF = 2, // Must Fragment
         DF = 4 // Dont Fragment
-    };
+    }
 
     [StructLayout(LayoutKind.Explicit)]
     public struct IPv4Header

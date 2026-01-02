@@ -23,10 +23,10 @@ namespace Machina.FFXIV.Headers.Chinese
         ShowActionName = 1,
         ShowItemName = 2,
         MountName = 0x0d
-    };
+    }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public unsafe struct Server_ActionEffectHeader
+    public struct Server_ActionEffectHeader
     {
         public Server_MessageHeader MessageHeader; // 8 DWORDS
         public uint animationTargetId;  // who the animation targets

@@ -30,7 +30,7 @@ namespace Machina.FFXIV.Headers.Chinese
         Targetable = 0x36,
         DirectorUpdate = 0x6d,
         LimitBreak = 0x1f9
-    };
+    }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct Server_ActorControl

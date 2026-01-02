@@ -28,5 +28,5 @@ namespace Machina.FFXIV.Headers.Tc
         Two = 0x20,
         Three = 0x40,
         Four = 0x80
-    };
+    }
 }

@@ -66,8 +66,7 @@ namespace Machina.FFXIV.Oodle
 
                 if (_oodleImplementation == OodleImplementation.FfxivTcp || _oodleImplementation == OodleImplementation.LibraryTcp || _oodleImplementation == OodleImplementation.KoreanFfxivUdp)
                     return new OodleTCPWrapper(_oodleNative);
-                else
-                    return new OodleUDPWrapper(_oodleNative);
+                return new OodleUDPWrapper(_oodleNative);
             }
         }
     }

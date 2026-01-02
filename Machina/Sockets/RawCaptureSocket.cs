@@ -46,7 +46,7 @@ namespace Machina.Sockets
                 _pendingBuffers = new ConcurrentQueue<byte[]>();
 
                 // start receiving data asynchronously
-                _ = _socket.BeginReceive(_currentBuffer, 0, _currentBuffer.Length, SocketFlags.None, new AsyncCallback(OnReceive), null);
+                _ = _socket.BeginReceive(_currentBuffer, 0, _currentBuffer.Length, SocketFlags.None, OnReceive, null);
             }
         }
 
@@ -138,7 +138,7 @@ namespace Machina.Sockets
                         Array.Copy(_currentBuffer, 0, buffer, 0, received);
                     }
 
-                    _ = _socket.BeginReceive(_currentBuffer, 0, _currentBuffer.Length, SocketFlags.None, new AsyncCallback(OnReceive), null);
+                    _ = _socket.BeginReceive(_currentBuffer, 0, _currentBuffer.Length, SocketFlags.None, OnReceive, null);
 
                     if (buffer != null)
                         _pendingBuffers.Enqueue(buffer);
@@ -150,7 +150,7 @@ namespace Machina.Sockets
             }
             catch (Exception ex)
             {
-                Trace.WriteLine("RawSocket: Error while receiving socket data.  Network capture aborted, please restart application." + ex.ToString(), "DEBUG-MACHINA");
+                Trace.WriteLine("RawSocket: Error while receiving socket data.  Network capture aborted, please restart application." + ex, "DEBUG-MACHINA");
             }
         }
 
