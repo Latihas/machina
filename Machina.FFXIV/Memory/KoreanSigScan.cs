@@ -32,7 +32,7 @@ namespace Machina.FFXIV.Memory
             { SignatureType.OodleNetwork1TCP_State_Size, SignatureStringToByteArray("48 8b 7f ** 48 85 f6 75 ** 48 89 ** ** e8 ** ** ** ** 4c ** ** e8") },
             { SignatureType.OodleNetwork1TCP_Train, SignatureStringToByteArray("41 83 fd 01 75 ** 48 8b 0f e8") },
             { SignatureType.OodleNetwork1TCP_Decode, SignatureStringToByteArray("4c 8b 11 48 89 6c ** ** 4d 85 d2 74 ** 49 8b ca e8 ") },
-            { SignatureType.OodleNetwork1TCP_Encode, SignatureStringToByteArray("48 8b ** 48 8d ** ** ** c6 44 ** ** ** 49 8b ** 48 89 44 ** ** e8" ) },
+            { SignatureType.OodleNetwork1TCP_Encode, SignatureStringToByteArray("48 8b ** 48 8d ** ** ** c6 44 ** ** ** 49 8b ** 48 89 44 ** ** e8" ) }
         };
     }
 }

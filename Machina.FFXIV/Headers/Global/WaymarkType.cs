@@ -27,6 +27,6 @@ namespace Machina.FFXIV.Headers
         One = 0x10,
         Two = 0x20,
         Three = 0x40,
-        Four = 0x80,
+        Four = 0x80
     };
 }

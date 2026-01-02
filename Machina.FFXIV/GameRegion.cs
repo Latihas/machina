@@ -20,6 +20,6 @@ namespace Machina.FFXIV
         Global = 1,
         Chinese = 2,
         Korean = 3,
-        Tc = 4,
+        Tc = 4
     };
 }

@@ -88,7 +88,7 @@ namespace Machina.FFXIV.Deucalion
         {
             PAGE_READWRITE = 4,
             MEM_COMMIT = 0x00001000,
-            MEM_RESERVE = 0x00002000,
+            MEM_RESERVE = 0x00002000
         }
 
         private enum SE_OBJECT_TYPE

@@ -249,7 +249,7 @@ namespace Machina.FFXIV.Deucalion
                     header = new DeucalionHeader()
                     {
                         channel = (DeucalionChannel)9000,
-                        Opcode = DeucalionOpcode.Debug,
+                        Opcode = DeucalionOpcode.Debug
                     },
                     data = Encoding.UTF8.GetBytes("FFXIV_ACT_Plugin")
                 }, _tokenSource.Token);
