@@ -21,275 +21,244 @@ using Machina.FFXIV.Deucalion;
 using Machina.FFXIV.Oodle;
 using Machina.Infrastructure;
 
-namespace Machina.FFXIV
-{
+namespace Machina.FFXIV;
+
+/// <summary>
+///     FFXIVNetworkMonitor is configured through the following properties after it is constructed:
+///     MonitorType: Specifies whether it should use a winsock raw socket, or use WinPCap (requires separate kernel driver
+///     installation).  Default is a raw socket.
+///     ProcessID: (optional) Specifies the process ID to record traffic from
+///     ProcessIDList: Specifies a collection of process IDs to record traffic from
+///     This class uses the Machina.TCPNetworkMonitor class to find and monitor the communication from Final Fantasy XIV.
+///     It decodes the data thaat adheres to the
+///     FFXIV network packet format and calls the message delegate when data is received.
+/// </summary>
+public class FFXIVNetworkMonitor : IDisposable {
     /// <summary>
-    /// FFXIVNetworkMonitor is configured through the following properties after it is constructed:
-    ///   MonitorType: Specifies whether it should use a winsock raw socket, or use WinPCap (requires separate kernel driver installation).  Default is a raw socket.
-    ///   ProcessID: (optional) Specifies the process ID to record traffic from
-    ///   ProcessIDList: Specifies a collection of process IDs to record traffic from
-    ///     
-    /// This class uses the Machina.TCPNetworkMonitor class to find and monitor the communication from Final Fantasy XIV.  It decodes the data thaat adheres to the
-    ///   FFXIV network packet format and calls the message delegate when data is received.
+    ///     Specifies the type of monitor to use - Raw socket or WinPCap
     /// </summary>
-    public class FFXIVNetworkMonitor : IDisposable
-    {
+    public NetworkMonitorType MonitorType { get; set; } = NetworkMonitorType.RawSocket;
 
-        /// <summary>
-        /// Specifies the type of monitor to use - Raw socket or WinPCap
-        /// </summary>
-        public NetworkMonitorType MonitorType
-        { get; set; } = NetworkMonitorType.RawSocket;
+    /// <summary>
+    ///     Specifies the Process ID that is generating or receiving the traffic.  Either ProcessID, ProcessIDList, or
+    ///     WindowName must be specified.
+    /// </summary>
+    public uint ProcessID { get; set; }
 
-        /// <summary>
-        /// Specifies the Process ID that is generating or receiving the traffic.  Either ProcessID, ProcessIDList, or WindowName must be specified.
-        /// </summary>
-        public uint ProcessID
-        { get; set; }
+    public ICollection<uint> ProcessIDList { get; } = new List<uint>();
 
-        public ICollection<uint> ProcessIDList
-        { get; } = new List<uint>();
+    /// <summary>
+    ///     Specifies the local IP address to override the detected IP
+    /// </summary>
+    public IPAddress LocalIP { get; set; } = IPAddress.None;
 
-        /// <summary>
-        /// Specifies the local IP address to override the detected IP
-        /// </summary>
-        public IPAddress LocalIP
-        { get; set; } = IPAddress.None;
+    /// <summary>
+    ///     Specifies whether to use Winsock/WinPcap server IP filtering instead of filtering in code
+    ///     This has a small chance of losing data when new TCP sockets connect, but significantly reduces data processing
+    ///     overhead.
+    /// </summary>
+    public bool UseRemoteIpFilter { get; set; }
 
-        /// <summary>
-        /// Specifies whether to use Winsock/WinPcap server IP filtering instead of filtering in code
-        ///   This has a small chance of losing data when new TCP sockets connect, but significantly reduces data processing overhead.
-        /// </summary>
-        public bool UseRemoteIpFilter
-        { get; set; }
+    /// <summary>
+    ///     The window name to use for game detection.
+    /// </summary>
+    public string WindowName { get; set; } = "FINAL FANTASY XIV";
 
-        /// <summary>
-        /// The window name to use for game detection.
-        /// </summary>
-        public string WindowName
-        { get; set; } = "FINAL FANTASY XIV";
+    /// <summary>
+    ///     This class keeps the information needed to authenticate the user on a remote machine or read a local file via PCap.
+    ///     The remote machine can either grant or refuse the access according to the information provided. In case the NULL
+    ///     authentication is required, both 'username' and 'password' can be NULL pointers.
+    /// </summary>
+    public TCPNetworkMonitorConfig.RPCapConf RPCap { get; set; } = new();
 
-        /// <summary>
-        /// This class keeps the information needed to authenticate the user on a remote machine or read a local file via PCap.
-        /// The remote machine can either grant or refuse the access according to the information provided. In case the NULL authentication is required, both 'username' and 'password' can be NULL pointers.
-        /// </summary>
-        public TCPNetworkMonitorConfig.RPCapConf RPCap
-        { get; set; } = new TCPNetworkMonitorConfig.RPCapConf();
+    /// <summary>
+    ///     the type of Oodle implementation to use - for most cases it should be FfxivTcp
+    /// </summary>
+    public OodleImplementation OodleImplementation { get; set; } = OodleImplementation.FfxivTcp;
 
-        /// <summary>
-        /// the type of Oodle implementation to use - for most cases it should be FfxivTcp
-        /// </summary>
-        public OodleImplementation OodleImplementation
-        { get; set; } = OodleImplementation.FfxivTcp;
+    public string OodlePath { get; set; } = @"C:\Program Files (x86)\FINAL FANTASY XIV - A Realm Reborn\game\ffxiv_dx11.exe";
 
-        public string OodlePath
-        { get; set; } = @"C:\Program Files (x86)\FINAL FANTASY XIV - A Realm Reborn\game\ffxiv_dx11.exe";
+    /// <summary>
+    ///     Inject and use deucalion dll to receive game network data.  Deucalion is distributed here:
+    ///     https://github.com/ff14wed/deucalion
+    /// </summary>
+    public bool UseDeucalion { get; set; }
 
-        /// <summary>
-        /// Inject and use deucalion dll to receive game network data.  Deucalion is distributed here:
-        ///   https://github.com/ff14wed/deucalion
-        /// </summary>
-        public bool UseDeucalion
-        { get; set; }
+    #region Message Delegates section
 
-        #region Message Delegates section
-        public delegate void MessageReceived2(TCPConnection connection, long epoch, byte[] message);
+    public delegate void MessageReceived2(TCPConnection connection, long epoch, byte[] message);
 
-        /// <summary>
-        /// Specifies the delegate that is called when data is received and successfully decoded.
-        /// </summary>
-        public MessageReceived2 MessageReceivedEventHandler;
+    /// <summary>
+    ///     Specifies the delegate that is called when data is received and successfully decoded.
+    /// </summary>
+    public MessageReceived2 MessageReceivedEventHandler;
 
-        public void OnMessageReceived(TCPConnection connection, long epoch, byte[] message)
-        {
-            MessageReceivedEventHandler?.Invoke(connection, epoch, message);
+    public void OnMessageReceived(TCPConnection connection, long epoch, byte[] message) {
+        MessageReceivedEventHandler?.Invoke(connection, epoch, message);
+    }
+
+    public delegate void MessageSent2(TCPConnection connection, long epoch, byte[] message);
+
+    public MessageSent2 MessageSentEventHandler;
+
+    public void OnMessageSent(TCPConnection connection, long epoch, byte[] message) {
+        MessageSentEventHandler?.Invoke(connection, epoch, message);
+    }
+
+    #endregion
+
+    private TCPNetworkMonitor _monitor;
+    private DeucalionClient _deucalionClient;
+    private DalamudClient _dalamudClient;
+    private bool _disposedValue;
+
+    private readonly Dictionary<string, FFXIVBundleDecoder> _sentDecoders = new();
+    private readonly Dictionary<string, FFXIVBundleDecoder> _receivedDecoders = new();
+
+    /// <summary>
+    ///     Validates the parameters and starts the monitor.
+    /// </summary>
+    public void Start() {
+        if (_monitor != null) {
+            _monitor.Stop();
+            _monitor = null;
         }
 
-        public delegate void MessageSent2(TCPConnection connection, long epoch, byte[] message);
+        if (MessageReceivedEventHandler == null)
+            throw new ArgumentException("MessageReceived delegate must be specified.");
 
-        public MessageSent2 MessageSentEventHandler;
+        if (UseDeucalion) {
+            /*
+            if (ProcessID == 0)
+                throw new ArgumentException("ProcessID must be specified for Deucalion.");
 
-        public void OnMessageSent(TCPConnection connection, long epoch, byte[] message)
-        {
-            MessageSentEventHandler?.Invoke(connection, epoch, message);
+            // Always wait 1 second before injecting Deucalion, in case it is shutting down.
+            System.Threading.Thread.Sleep(1000);
+
+            DeucalionInjector.LastInjectionError = string.Empty;
+            bool isValid = DeucalionInjector.ValidateLibraryChecksum();
+            if (isValid)
+            {
+                // Note: if InjectLibrary fails, continue attempting to read from the game.  it is possible the library was already injected.
+                _ = DeucalionInjector.InjectLibrary((int)ProcessID);
+
+            _deucalionClient = new DeucalionClient();
+            _deucalionClient.MessageSent = (message) => ProcessDeucalionMessage(message, true);
+            _deucalionClient.MessageReceived = (message) => ProcessDeucalionMessage(message, false);
+            _deucalionClient.Connect((int)ProcessID);
+            */
+
+            // We are replacing Deucalion with Dalamud here, while leaving the Machina.FFXIV API intact
+            _dalamudClient = new DalamudClient();
+            _dalamudClient.MessageReceived = (epoch, message) => ProcessDalamudMessage(epoch, message);
+            _dalamudClient.Connect();
+        }
+        else {
+            _monitor = new TCPNetworkMonitor();
+            _monitor.Config.ProcessID = ProcessID;
+            _monitor.Config.ProcessIDList = ProcessIDList;
+            if (_monitor.Config.ProcessID == 0)
+                _monitor.Config.WindowName = WindowName;
+            _monitor.Config.MonitorType = MonitorType;
+            _monitor.Config.LocalIP = LocalIP;
+            _monitor.Config.UseRemoteIpFilter = UseRemoteIpFilter;
+            _monitor.Config.RPCap = RPCap;
+
+            _monitor.DataSentEventHandler = (connection, data) => ProcessSentMessage(connection, data);
+            _monitor.DataReceivedEventHandler = (connection, data) => ProcessReceivedMessage(connection, data);
+
+            OodleFactory.SetImplementation(OodleImplementation, OodlePath);
+            _monitor.Start();
+        }
+    }
+
+    /// <summary>
+    ///     Stops the monitor if it is active.
+    /// </summary>
+    public void Stop() {
+        if (_monitor != null) {
+            _monitor.DataSentEventHandler = null;
+            _monitor.DataReceivedEventHandler = null;
+            _monitor.Stop();
+            _monitor.Dispose();
+            _monitor = null;
         }
 
-        #endregion
-
-        private TCPNetworkMonitor _monitor;
-        private DeucalionClient _deucalionClient;
-        private DalamudClient _dalamudClient;
-        private bool _disposedValue;
-
-        private readonly Dictionary<string, FFXIVBundleDecoder> _sentDecoders = new Dictionary<string, FFXIVBundleDecoder>();
-        private readonly Dictionary<string, FFXIVBundleDecoder> _receivedDecoders = new Dictionary<string, FFXIVBundleDecoder>();
-
-        /// <summary>
-        /// Validates the parameters and starts the monitor.
-        /// </summary>
-        public void Start()
-        {
-            if (_monitor != null)
-            {
-                _monitor.Stop();
-                _monitor = null;
-            }
-
-            if (MessageReceivedEventHandler == null)
-                throw new ArgumentException("MessageReceived delegate must be specified.");
-
-            if (UseDeucalion)
-            {
-                /*
-                if (ProcessID == 0)
-                    throw new ArgumentException("ProcessID must be specified for Deucalion.");
-
-                // Always wait 1 second before injecting Deucalion, in case it is shutting down.
-                System.Threading.Thread.Sleep(1000);
-
-                DeucalionInjector.LastInjectionError = string.Empty;
-                bool isValid = DeucalionInjector.ValidateLibraryChecksum();
-                if (isValid)
-                {
-                    // Note: if InjectLibrary fails, continue attempting to read from the game.  it is possible the library was already injected.
-                    _ = DeucalionInjector.InjectLibrary((int)ProcessID);
-
-                _deucalionClient = new DeucalionClient();
-                _deucalionClient.MessageSent = (message) => ProcessDeucalionMessage(message, true);
-                _deucalionClient.MessageReceived = (message) => ProcessDeucalionMessage(message, false);
-                _deucalionClient.Connect((int)ProcessID);
-                */
-
-                // We are replacing Deucalion with Dalamud here, while leaving the Machina.FFXIV API intact
-                _dalamudClient = new DalamudClient();
-                _dalamudClient.MessageReceived = (epoch, message) => ProcessDalamudMessage(epoch, message);
-                _dalamudClient.Connect();
-            }
-            else
-            {
-                _monitor = new TCPNetworkMonitor();
-                _monitor.Config.ProcessID = ProcessID;
-                _monitor.Config.ProcessIDList = ProcessIDList;
-                if (_monitor.Config.ProcessID == 0)
-                    _monitor.Config.WindowName = WindowName;
-                _monitor.Config.MonitorType = MonitorType;
-                _monitor.Config.LocalIP = LocalIP;
-                _monitor.Config.UseRemoteIpFilter = UseRemoteIpFilter;
-                _monitor.Config.RPCap = RPCap;
-
-                _monitor.DataSentEventHandler = (connection, data) => ProcessSentMessage(connection, data);
-                _monitor.DataReceivedEventHandler = (connection, data) => ProcessReceivedMessage(connection, data);
-
-                OodleFactory.SetImplementation(OodleImplementation, OodlePath);
-                _monitor.Start();
-            }
+        if (_deucalionClient != null) {
+            _deucalionClient.MessageSent = null;
+            _deucalionClient.MessageReceived = null;
+            _deucalionClient.Disconnect();
+            _deucalionClient.Dispose();
+            _deucalionClient = null;
         }
 
-        /// <summary>
-        /// Stops the monitor if it is active.
-        /// </summary>
-        public void Stop()
-        {
-            if (_monitor != null)
-            {
-                _monitor.DataSentEventHandler = null;
-                _monitor.DataReceivedEventHandler = null;
-                _monitor.Stop();
-                _monitor.Dispose();
-                _monitor = null;
-            }
-
-            if (_deucalionClient != null)
-            {
-                _deucalionClient.MessageSent = null;
-                _deucalionClient.MessageReceived = null;
-                _deucalionClient.Disconnect();
-                _deucalionClient.Dispose();
-                _deucalionClient = null;
-            }
-
-            if (_dalamudClient != null)
-            {
-                _dalamudClient.Disconnect();
-                _dalamudClient.Dispose();
-                _dalamudClient = null;
-            }
-
-            _sentDecoders.Clear();
-            _receivedDecoders.Clear();
+        if (_dalamudClient != null) {
+            _dalamudClient.Disconnect();
+            _dalamudClient.Dispose();
+            _dalamudClient = null;
         }
 
-        public void ProcessSentMessage(TCPConnection connection, byte[] data)
-        {
-            Tuple<long, byte[]> message;
-            if (!_sentDecoders.ContainsKey(connection.ID))
-                _sentDecoders.Add(connection.ID, new FFXIVBundleDecoder());
+        _sentDecoders.Clear();
+        _receivedDecoders.Clear();
+    }
 
-            _sentDecoders[connection.ID].StoreData(data);
-            while ((message = _sentDecoders[connection.ID].GetNextFFXIVMessage()) != null)
-            {
-                OnMessageSent(connection, message.Item1, message.Item2);
+    public void ProcessSentMessage(TCPConnection connection, byte[] data) {
+        Tuple<long, byte[]> message;
+        if (!_sentDecoders.ContainsKey(connection.ID))
+            _sentDecoders.Add(connection.ID, new FFXIVBundleDecoder());
+
+        _sentDecoders[connection.ID].StoreData(data);
+        while ((message = _sentDecoders[connection.ID].GetNextFFXIVMessage()) != null) {
+            OnMessageSent(connection, message.Item1, message.Item2);
+        }
+    }
+
+    public void ProcessReceivedMessage(TCPConnection connection, byte[] data) {
+        Tuple<long, byte[]> message;
+        if (!_receivedDecoders.ContainsKey(connection.ID))
+            _receivedDecoders.Add(connection.ID, new FFXIVBundleDecoder());
+
+        _receivedDecoders[connection.ID].StoreData(data);
+        while ((message = _receivedDecoders[connection.ID].GetNextFFXIVMessage()) != null) {
+            OnMessageReceived(connection, message.Item1, message.Item2);
+        }
+    }
+
+    public void ProcessDeucalionMessage(byte[] data, bool isSend) {
+        // TCP Connection is irrelevent for this, but needed by interface, so make new one.
+        TCPConnection connection = new();
+        connection.ProcessId = ProcessID;
+
+        var (epoch, packet) = DeucalionClient.ConvertDeucalionFormatToPacketFormat(data);
+
+        if (isSend) {
+            OnMessageSent(connection, epoch, packet);
+        }
+        else {
+            OnMessageReceived(connection, epoch, packet);
+        }
+    }
+
+    public void ProcessDalamudMessage(long epoch, byte[] data) {
+        // TCP Connection is irrelevent for this, but needed by interface, so make new one.
+        var connection = new TCPConnection();
+        connection.ProcessId = ProcessID;
+        OnMessageReceived(connection, epoch, data);
+    }
+
+
+    protected virtual void Dispose(bool disposing) {
+        if (!_disposedValue) {
+            if (disposing) {
+                _monitor?.Dispose();
             }
+            _disposedValue = true;
         }
+    }
 
-        public void ProcessReceivedMessage(TCPConnection connection, byte[] data)
-        {
-            Tuple<long, byte[]> message;
-            if (!_receivedDecoders.ContainsKey(connection.ID))
-                _receivedDecoders.Add(connection.ID, new FFXIVBundleDecoder());
-
-            _receivedDecoders[connection.ID].StoreData(data);
-            while ((message = _receivedDecoders[connection.ID].GetNextFFXIVMessage()) != null)
-            {
-                OnMessageReceived(connection, message.Item1, message.Item2);
-            }
-
-        }
-
-        public void ProcessDeucalionMessage(byte[] data, bool isSend)
-        {
-            // TCP Connection is irrelevent for this, but needed by interface, so make new one.
-            TCPConnection connection = new TCPConnection();
-            connection.ProcessId = ProcessID;
-
-            (long epoch, byte[] packet) = DeucalionClient.ConvertDeucalionFormatToPacketFormat(data);
-
-            if (isSend)
-            {
-                OnMessageSent(connection, epoch, packet);
-            }
-            else
-            {
-                OnMessageReceived(connection, epoch, packet);
-            }
-        }
-
-        public void ProcessDalamudMessage(long epoch, byte[] data)
-        {
-            // TCP Connection is irrelevent for this, but needed by interface, so make new one.
-            var connection = new TCPConnection();
-            connection.ProcessId = ProcessID;
-            OnMessageReceived(connection, epoch, data);
-        }
-
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposedValue)
-            {
-                if (disposing)
-                {
-                    _monitor?.Dispose();
-                }
-                _disposedValue = true;
-            }
-        }
-
-        public void Dispose()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
-        }
+    public void Dispose() {
+        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        Dispose(true);
+        GC.SuppressFinalize(this);
     }
 }

@@ -15,15 +15,12 @@
 
 using System;
 
-namespace Machina.Sockets
-{
-    public class PcapException : ApplicationException
-    {
-        public PcapException(string message) : base(message)
-        {
-        }
-        public PcapException(string message, Exception ex) : base(message, ex)
-        {
-        }
+namespace Machina.Sockets;
+
+public class PcapException : ApplicationException {
+    public PcapException(string message) : base(message) {
+    }
+
+    public PcapException(string message, Exception ex) : base(message, ex) {
     }
 }

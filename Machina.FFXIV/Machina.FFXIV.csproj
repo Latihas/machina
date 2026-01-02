@@ -1,19 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <Version>2.4.4.0</Version>
-        <AssemblyVersion>2.4.4.0</AssemblyVersion>
-        <FileVersion>2.4.4.0</FileVersion>
-        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-        <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
-    </PropertyGroup>
-    <ItemGroup>
-        <EmbeddedResource Include="Headers\Opcodes\Chinese.txt" />
-        <EmbeddedResource Include="Headers\Opcodes\Global.txt" />
-        <EmbeddedResource Include="Headers\Opcodes\Tc.txt" />
-        <EmbeddedResource Include="Headers\Opcodes\Korean.txt" />
-    </ItemGroup>
-    <ItemGroup>
-        <ProjectReference Include="..\Machina\Machina.csproj" />
-    </ItemGroup>
+  <PropertyGroup>
+    <Version>2.4.4.0</Version>
+    <AssemblyVersion>2.4.4.0</AssemblyVersion>
+    <FileVersion>2.4.4.0</FileVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Headers\Opcodes\Chinese.txt"/>
+    <EmbeddedResource Include="Headers\Opcodes\Global.txt"/>
+    <EmbeddedResource Include="Headers\Opcodes\Tc.txt"/>
+    <EmbeddedResource Include="Headers\Opcodes\Korean.txt"/>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Machina\Machina.csproj"/>
+  </ItemGroup>
 </Project>

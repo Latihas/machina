@@ -15,18 +15,16 @@
 
 using System.Runtime.InteropServices;
 
-namespace Machina.FFXIV.Headers.Chinese
-{
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public struct Server_EffectResultBasic
-    {
-        public Server_MessageHeader MessageHeader; // 8 DWORDS
-        public uint Unknown1;
-        public uint RelatedActionSequence;
-        public uint ActorID;
-        public uint CurrentHP;
-        public uint Unknown2;
-        public ushort Unknown3;
-        public ushort Unknown4;
-    }
+namespace Machina.FFXIV.Headers.Chinese;
+
+[StructLayout(LayoutKind.Sequential, Pack = 1)]
+public struct Server_EffectResultBasic {
+    public Server_MessageHeader MessageHeader; // 8 DWORDS
+    public uint Unknown1;
+    public uint RelatedActionSequence;
+    public uint ActorID;
+    public uint CurrentHP;
+    public uint Unknown2;
+    public ushort Unknown3;
+    public ushort Unknown4;
 }

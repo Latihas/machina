@@ -15,18 +15,12 @@
 
 using System.Runtime.InteropServices;
 
-namespace Machina.Headers
-{
-    [StructLayout(LayoutKind.Explicit)]
-    public struct UDPHeader
-    {
-        [FieldOffset(0)]
-        public ushort source_port;
-        [FieldOffset(2)]
-        public ushort destination_port;
-        [FieldOffset(4)]
-        public ushort length;
-        [FieldOffset(6)]
-        public ushort checksum;
-    }
+namespace Machina.Headers;
+
+[StructLayout(LayoutKind.Explicit)]
+public struct UDPHeader {
+    [FieldOffset(0)] public ushort source_port;
+    [FieldOffset(2)] public ushort destination_port;
+    [FieldOffset(4)] public ushort length;
+    [FieldOffset(6)] public ushort checksum;
 }
