@@ -6,9 +6,9 @@
     </PropertyGroup>
     
     <PropertyGroup>
-        <Version>2.4.4.0</Version>
-        <AssemblyVersion>2.4.4.0</AssemblyVersion>
-        <FileVersion>2.4.4.0</FileVersion>
+        <Version>2.4.5.5</Version>
+        <AssemblyVersion>2.4.5.5</AssemblyVersion>
+        <FileVersion>2.4.5.5</FileVersion>
         <EnableNETAnalyzers>true</EnableNETAnalyzers>
         <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -29,7 +29,7 @@
         <RepositoryUrl>https://github.com/ravahn/machina</RepositoryUrl>
         <NeutralLanguage>en</NeutralLanguage>
         <Description>Extension to Machina network library to support decoding of Final Fantasy XIV network data</Description>
-        <Copyright>Copyright © 2025 Ravahn</Copyright>
+        <Copyright>Copyright © 2026 Ravahn</Copyright>
         <PackageProjectUrl>https://github.com/ravahn/machina</PackageProjectUrl>
         <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
@@ -41,13 +41,14 @@
     <ItemGroup>
         <None Remove="Ravahn.Machina.Keyfile.snk" />
         <None Remove="Deucalion\Distrib\deucalion-1.2.1.dll" />
-        <None Remove="Deucalion\Distrib\deucalion-1.4.0.dll" />
-      <None Remove="Ravahn.Machina.Keyfile.snk" />
+        <None Remove="Deucalion\Distrib\deucalion-1.5.0.dll" />
+        <None Remove="Ravahn.Machina.Keyfile.snk" />
     </ItemGroup>
 
     <ItemGroup>
         <EmbeddedResource Include="Headers\Opcodes\Chinese.txt" />
         <EmbeddedResource Include="Headers\Opcodes\Global.txt" />
+        <EmbeddedResource Include="Headers\Opcodes\TraditionalChinese.txt" />
         <EmbeddedResource Include="Headers\Opcodes\Korean.txt" />
     </ItemGroup>
 

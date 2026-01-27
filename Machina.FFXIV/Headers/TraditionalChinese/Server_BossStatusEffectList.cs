@@ -13,31 +13,27 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see<http://www.gnu.org/licenses/>.
 
-using Machina.FFXIV.Headers.Opcodes;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Runtime.InteropServices;
 
-namespace Machina.FFXIV.Tests.Headers.Opcodes
+namespace Machina.FFXIV.Headers.TraditionalChinese
 {
-    [TestClass()]
-    public class OpcodeManagerTests
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public unsafe struct Server_BossStatusEffectList
     {
-        [TestMethod()]
-        public void OpcodeManagerTest()
-        {
-            OpcodeManager sut = new();
-
-            Assert.IsNotNull(sut);
-        }
-
-        [TestMethod()]
-        public void SetRegionTest()
-        {
-            OpcodeManager sut = new();
-
-            sut.SetRegion(GameRegion.Korean);
-
-            Assert.AreEqual(GameRegion.Korean, sut.GameRegion);
-            Assert.IsGreaterThan(0, sut.CurrentOpcodes["ActorControl"]);
-        }
+        public Server_MessageHeader MessageHeader; // 8 DWORDS
+        public fixed byte Effects2[30 * 3 * 4];
+        public byte JobID;
+        public byte Level1;
+        public byte Level2;
+        public byte Level3;
+        public uint CurrentHP;
+        public uint MaxHP;
+        public ushort CurrentMP;
+        public ushort MaxMP;
+        public byte DamageShield;
+        public ushort Unknown1;
+        public byte Unknown2;
+        public fixed byte Effects1[30 * 3 * 4];
+        public uint Unknown3;
     }
 }
