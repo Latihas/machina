@@ -1,8 +1,8 @@
 StatusEffectList|31e
-StatusEffectList2|1fe
+StatusEffectList2|9f
 StatusEffectList3|eb
 BossStatusEffectList|fa
-StatusEffectListForay3|fb
+StatusEffectListForay3|1fe
 Ability1|1e7
 Ability8|77
 Ability16|38f
