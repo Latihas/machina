@@ -15,7 +15,7 @@
 
 using System.Runtime.InteropServices;
 
-namespace Machina.FFXIV.Headers
+namespace Machina.FFXIV.Headers.TraditionalChinese
 {
     public enum Server_ActionEffectDisplayType : byte
     {
@@ -55,6 +55,7 @@ namespace Machina.FFXIV.Headers
         public byte unknown20;
         public byte effectCount;
         public ushort padding21;
+
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -80,9 +81,8 @@ namespace Machina.FFXIV.Headers
         public ushort padding3;
         public uint padding4;
         public fixed ulong TargetID[8];
-        public ushort TargetX;
-        public ushort TargetY;
-        public ushort TargetZ;
+        public uint effectflags1;
+        public ushort effectflags2;
         public ushort padding5;
         public uint padding6;
     }
@@ -97,9 +97,8 @@ namespace Machina.FFXIV.Headers
         public ushort padding3;
         public uint padding4;
         public fixed ulong TargetID[16];
-        public ushort TargetX;
-        public ushort TargetY;
-        public ushort TargetZ;
+        public uint effectflags1;
+        public ushort effectflags2;
         public ushort padding5;
         public uint padding6;
     }
@@ -114,9 +113,8 @@ namespace Machina.FFXIV.Headers
         public ushort padding3;
         public uint padding4;
         public fixed ulong TargetID[24];
-        public ushort TargetX;
-        public ushort TargetY;
-        public ushort TargetZ;
+        public uint effectflags1;
+        public ushort effectflags2;
         public ushort padding5;
         public uint padding6;
     }
@@ -131,9 +129,8 @@ namespace Machina.FFXIV.Headers
         public ushort padding3;
         public uint padding4;
         public fixed ulong TargetID[32];
-        public ushort TargetX;
-        public ushort TargetY;
-        public ushort TargetZ;
+        public uint effectflags1;
+        public ushort effectflags2;
         public ushort padding5;
         public uint padding6;
     }
