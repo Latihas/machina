@@ -80,5 +80,7 @@ public class OpcodeManager {
         CurrentOpcodes = _opcodes[GameRegion];
 
         Trace.WriteLine($"Using FFXIV Opcodes for game region {region}", "Machina");
+        Trace.WriteLine(Server_MessageType.Ability1, "Machina");
+        Trace.WriteLine((ushort)Server_MessageType.Ability1, "Machina");
     }
 }
