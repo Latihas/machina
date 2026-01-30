@@ -15,7 +15,7 @@
 
 using System.Runtime.InteropServices;
 
-namespace Machina.FFXIV.Headers.Korean
+namespace Machina.FFXIV.Headers.TraditionalChinese
 {
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public unsafe struct Server_StatusEffectListForay3

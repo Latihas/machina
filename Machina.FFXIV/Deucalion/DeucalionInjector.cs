@@ -125,22 +125,21 @@ public static class DeucalionInjector {
     public static string LastInjectionError { get; internal set; }
 
     /// <summary>
-    ///     Specifies the Game region - Korean or Global.  Required to distinguish between expected Deucalion dll versions.
+        /// Specifies the Game region - Korean, Tc, or Global.  Required to distinguish between expected Deucalion dll versions.
     /// </summary>
     public static GameRegion GameRegion { get; set; } = GameRegion.Global;
 
     /// <summary>
     ///     returns the expected Deucalion file name based on the Game Region
     /// </summary>
-    public static string DeucalionFileName => GameRegion == GameRegion.Korean ? "deucalion-1.2.1.dll" : "deucalion-1.4.0.dll";
+    public static string DeucalionFileName => GameRegion == GameRegion.Korean ? "deucalion-1.2.1.dll" : "deucalion-1.5.0.dll";
 
     /// <summary>
     ///     Minimum version of Deucalion supported by Machina
     /// </summary>
     public static Version DeucalionVersion => GameRegion == GameRegion.Korean
-        ? new Version(1, 2, 0)
-        : // supports 1.2.0 + 1.2.1
-        new Version(1, 3, 3);
+        ? new Version(1, 2, 0):
+        new Version(1, 5, 0);
 
     /// <summary>
     ///     Stores the folder where Deucalion should be loaded from
@@ -148,10 +147,14 @@ public static class DeucalionInjector {
     /// </summary>
     public static string DeucalionPath { get; set; } = Environment.CurrentDirectory;
 
-    private static string _checksum => GameRegion == GameRegion.Korean
-        ? "ea-bf-ff-9e-6c-f5-84-2f-97-78-1b-ae-66-9d-5b-2b-40-56-a5-88-1b-ed-e2-9c-94-24-b4-62-6c-8f-56-6e"
-        : // 1.2.1
-        "02-51-2b-b4-af-8d-ae-7d-78-f0-e7-ca-d4-1b-63-23-64-0d-18-bc-17-12-fc-c6-6b-bb-05-c0-69-19-fc-51"; // 1.4.0
+        private static string _checksum
+        {
+            get
+            {
+                return GameRegion == GameRegion.TraditionalChinese ? "ea-bf-ff-9e-6c-f5-84-2f-97-78-1b-ae-66-9d-5b-2b-40-56-a5-88-1b-ed-e2-9c-94-24-b4-62-6c-8f-56-6e" // 1.2.1 
+                    : "32-6b-e4-db-26-10-64-eb-b5-1b-8c-46-d2-94-0f-55-70-1d-79-88-7e-2c-65-07-0a-ff-00-de-4c-8c-65-ef"; // 1.5.0
+            }
+        }
 
     public static bool ValidateLibraryChecksum() {
         var deucalionFile = Path.Combine(DeucalionPath, DeucalionFileName);

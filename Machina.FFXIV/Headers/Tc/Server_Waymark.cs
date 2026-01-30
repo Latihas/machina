@@ -13,22 +13,31 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see<http://www.gnu.org/licenses/>.
 
-using System.Runtime.InteropServices;
+using Machina.FFXIV.Headers.Opcodes;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Machina.FFXIV.Headers.Tc;
+namespace Machina.FFXIV.Tests.Headers.Opcodes
+{
+    [TestClass()]
+    public class OpcodeManagerTests
+    {
+        [TestMethod()]
+        public void OpcodeManagerTest()
+        {
+            OpcodeManager sut = new();
 
-[StructLayout(LayoutKind.Sequential, Pack = 1)]
-public struct Server_Waymark {
-    public enum WaymarkStatus : byte {
-        Off = 0,
-        On = 1
+            Assert.IsNotNull(sut);
+        }
+
+        [TestMethod()]
+        public void SetRegionTest()
+        {
+            OpcodeManager sut = new();
+
+            sut.SetRegion(GameRegion.Korean);
+
+            Assert.AreEqual(GameRegion.Korean, sut.GameRegion);
+            Assert.IsGreaterThan(0, sut.CurrentOpcodes["ActorControl"]);
+        }
     }
-
-    public Server_MessageHeader MessageHeader; // 8 DWORDS
-    public WaymarkType Waymark;
-    public WaymarkStatus Status;
-    public ushort unknown;
-    public int PosX;
-    public int PosY; // To calculate 'float' coords from these you cast them to float and then divide by 1000.0
-    public int PosZ;
 }
