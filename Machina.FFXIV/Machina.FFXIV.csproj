@@ -17,4 +17,25 @@
   <ItemGroup>
     <ProjectReference Include="..\Machina\Machina.csproj"/>
   </ItemGroup>
+    <ItemGroup>
+        <EmbeddedResource Include="Headers\Opcodes\Chinese.txt" />
+        <EmbeddedResource Include="Headers\Opcodes\Global.txt" />
+        <EmbeddedResource Include="Headers\Opcodes\TraditionalChinese.txt" />
+        <EmbeddedResource Include="Headers\Opcodes\Korean.txt" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Machina\Machina.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="..\LICENSE.md">
+            <Pack>True</Pack>
+            <PackagePath></PackagePath>
+        </None>
+        <None Include="..\README.md">
+            <Pack>True</Pack>
+            <PackagePath></PackagePath>
+        </None>
+    </ItemGroup>
 </Project>
