@@ -145,7 +145,7 @@ public class RawCaptureSocket : ICaptureSocket {
             _currentBuffer = null;
         }
         if (_pendingBuffers?.Count > 0) {
-            while (_pendingBuffers.TryDequeue(out var _)) {
+            while (_pendingBuffers.TryDequeue(out _)) {
             }
         }
     }

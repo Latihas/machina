@@ -265,7 +265,7 @@ public class PCapCaptureSocket : ICaptureSocket {
     }
 
     private void FreeBuffers() {
-        while (_pendingBuffers.TryDequeue(out var _)) {
+        while (_pendingBuffers.TryDequeue(out _)) {
             // do nothing
         }
     }
