@@ -15,10 +15,12 @@
 
 using System.Runtime.InteropServices;
 
-namespace Machina.FFXIV.Headers.TraditionalChinese;
-
-[StructLayout(LayoutKind.Sequential, Pack = 1)]
-public unsafe struct Server_StatusEffectList3 {
-    public Server_MessageHeader MessageHeader; // 8 DWORDS
-    public fixed byte Effects[30 * 3 * 4];
+namespace Machina.FFXIV.Headers.TraditionalChinese
+{
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public unsafe struct Server_StatusEffectList3
+    {
+        public Server_MessageHeader MessageHeader; // 8 DWORDS
+        public fixed byte Effects[30 * 3 * 4];
+    }
 }
