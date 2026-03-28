@@ -15,44 +15,39 @@
 
 using System;
 
-namespace Machina.FFXIV.Oodle
-{
-    public class OodleUDPWrapper : IOodleWrapper
-    {
-        private const byte HashtableBits = 17; // was 19 pre-OodleTCP era
-        private const int WindowSize = 0x100000; // was 0x16000 pre-OodleTCP era
+namespace Machina.FFXIV.Oodle;
 
-        private readonly byte[] _state;
-        private readonly byte[] _shared;
-        private readonly byte[] _window = new byte[WindowSize];
+public class OodleUDPWrapper : IOodleWrapper {
+    private const byte HashtableBits = 17; // was 19 pre-OodleTCP era
+    private const int WindowSize = 0x100000; // was 0x16000 pre-OodleTCP era
 
-        private readonly IOodleNative _oodleNative;
+    private readonly byte[] _state;
+    private readonly byte[] _shared;
+    private readonly byte[] _window = new byte[WindowSize];
 
-        public OodleUDPWrapper(IOodleNative native)
-        {
-            _oodleNative = native;
+    private readonly IOodleNative _oodleNative;
 
-            int stateSize = _oodleNative.OodleNetwork1UDP_State_Size();
-            int sharedSize = _oodleNative.OodleNetwork1_Shared_Size(HashtableBits);
+    public OodleUDPWrapper(IOodleNative native) {
+        _oodleNative = native;
 
-            _state = new byte[stateSize];
-            _shared = new byte[sharedSize];
+        var stateSize = _oodleNative.OodleNetwork1UDP_State_Size();
+        var sharedSize = _oodleNative.OodleNetwork1_Shared_Size(HashtableBits);
 
-            _oodleNative.OodleNetwork1_Shared_SetWindow(_shared, HashtableBits, _window, _window.Length);
+        _state = new byte[stateSize];
+        _shared = new byte[sharedSize];
 
-            _oodleNative.OodleNetwork1UDP_Train(_state, _shared, IntPtr.Zero, IntPtr.Zero, 0);
-        }
+        _oodleNative.OodleNetwork1_Shared_SetWindow(_shared, HashtableBits, _window, _window.Length);
 
-        public unsafe bool Decompress(byte[] payload, int offset, int compressedLength, byte[] plaintext, int decompressedLength)
-        {
-            fixed (byte* pPayload = payload)
-            {
-                if (!_oodleNative.OodleNetwork1UDP_Decode(_state, _shared, new IntPtr(pPayload + offset),
+        _oodleNative.OodleNetwork1UDP_Train(_state, _shared, IntPtr.Zero, IntPtr.Zero, 0);
+    }
+
+    public unsafe bool Decompress(byte[] payload, int offset, int compressedLength, byte[] plaintext, int decompressedLength) {
+        fixed (byte* pPayload = payload) {
+            if (!_oodleNative.OodleNetwork1UDP_Decode(_state, _shared, new IntPtr(pPayload + offset),
                     compressedLength, plaintext, decompressedLength))
-                    return false;
-            }
-
-            return true;
+                return false;
         }
+
+        return true;
     }
 }

@@ -13,30 +13,24 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see<http://www.gnu.org/licenses/>.
 
-using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Linq;
 using System.Runtime.InteropServices;
-using Machina.FFXIV.Memory;
 
-namespace Machina.FFXIV.Tests.Memory
+namespace Machina.FFXIV.Headers.TraditionalChinese
 {
-    [TestClass()]
-    public class SigScanTests
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public unsafe struct Server_Waymark
     {
-        [DllImport("kernel32", SetLastError = true, CharSet = CharSet.Ansi)]
-        private static extern IntPtr LoadLibraryW([MarshalAs(UnmanagedType.LPWStr)] string lpFileName);
-
-        [TestMethod()]
-        public void ReadTest()
+        public enum WaymarkStatus : byte
         {
-            IntPtr _libraryHandle = LoadLibraryW(@"C:\Program Files (x86)\FINAL FANTASY XIV - A Realm Reborn\game\ffxiv_dx11.exe");
-
-            SigScan sut = new();
-
-            System.Collections.Generic.Dictionary<SignatureType, int> result = sut.Read(_libraryHandle);
-
-            Assert.IsTrue(result.Any());
-        }
+            Off = 0,
+            On = 1
+        };
+        public Server_MessageHeader MessageHeader; // 8 DWORDS
+        public WaymarkType Waymark;
+        public WaymarkStatus Status;
+        public ushort unknown;
+        public int PosX;
+        public int PosY;// To calculate 'float' coords from these you cast them to float and then divide by 1000.0
+        public int PosZ;
     }
 }

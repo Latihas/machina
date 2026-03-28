@@ -15,12 +15,10 @@
 
 using System;
 
-namespace Machina.Sockets
-{
-    internal class PcapDeviceState
-    {
-        public PcapDevice Device { get; internal set; }
-        public int LinkType { get; internal set; }
-        public IntPtr Handle { get; internal set; }
-    }
+namespace Machina.Sockets;
+
+internal class PcapDeviceState {
+    public PcapDevice Device { get; internal set; }
+    public int LinkType { get; internal set; }
+    public IntPtr Handle { get; internal set; }
 }

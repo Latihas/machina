@@ -13,23 +13,21 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see<http://www.gnu.org/licenses/>.
 
-using System.Collections.ObjectModel;
-using System.Diagnostics;
+using System.Runtime.InteropServices;
 
-namespace Machina.Tests.Utility
+
+namespace Machina.FFXIV.Headers.TraditionalChinese
 {
-    public class MemoryTraceListener : TraceListener
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public unsafe struct Server_EffectResultBasic
     {
-        public Collection<string> Messages { get; set; } = new();
-
-        public override void Write(string message)
-        {
-            Messages.Add(message);
-        }
-
-        public override void WriteLine(string message)
-        {
-            Messages.Add(message);
-        }
+        public Server_MessageHeader MessageHeader; // 8 DWORDS
+        public uint Unknown1;
+        public uint RelatedActionSequence;
+        public uint ActorID;
+        public uint CurrentHP;
+        public uint Unknown2;
+        public ushort Unknown3;
+        public ushort Unknown4;
     }
 }

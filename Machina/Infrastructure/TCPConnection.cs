@@ -17,51 +17,39 @@ using System.Net;
 using Machina.Decoders;
 using Machina.Sockets;
 
-namespace Machina.Infrastructure
-{
-    public class TCPConnection
-    {
-        public uint LocalIP { get; set; }
-        public ushort LocalPort { get; set; }
-        public uint RemoteIP { get; set; }
-        public ushort RemotePort { get; set; }
+namespace Machina.Infrastructure;
 
-        public uint ProcessId { get; set; }
+public class TCPConnection {
+    public uint LocalIP { get; set; }
+    public ushort LocalPort { get; set; }
+    public uint RemoteIP { get; set; }
+    public ushort RemotePort { get; set; }
 
-        public string ID => ToString();
+    public uint ProcessId { get; set; }
 
-        internal ICaptureSocket Socket { get; set; }
+    public string ID => ToString();
 
-        internal IPDecoder IPDecoderReceive
-        { get; set; }
-        internal IPDecoder IPDecoderSend
-        { get; set; }
-        internal TCPDecoder TCPDecoderReceive
-        { get; set; }
-        internal TCPDecoder TCPDecoderSend
-        { get; set; }
+    internal ICaptureSocket Socket { get; set; }
 
-        public override bool Equals(object obj)
-        {
-            return obj is TCPConnection c
-                && LocalIP == c.LocalIP
-                && LocalPort == c.LocalPort
-                && RemoteIP == c.RemoteIP
-                && RemotePort == c.RemotePort;
-        }
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                return (int)(LocalIP ^ LocalPort ^ RemoteIP ^ RemotePort);
-            }
-        }
+    internal IPDecoder IPDecoderReceive { get; set; }
+    internal IPDecoder IPDecoderSend { get; set; }
+    internal TCPDecoder TCPDecoderReceive { get; set; }
+    internal TCPDecoder TCPDecoderSend { get; set; }
 
-        public override string ToString()
-        {
-            return $"{new IPAddress(LocalIP)}:{LocalPort}=>" +
-                $"{new IPAddress(RemoteIP)}:{RemotePort}({ProcessId})";
+    public override bool Equals(object obj) =>
+        obj is TCPConnection c
+        && LocalIP == c.LocalIP
+        && LocalPort == c.LocalPort
+        && RemoteIP == c.RemoteIP
+        && RemotePort == c.RemotePort;
+
+    public override int GetHashCode() {
+        unchecked {
+            return (int)(LocalIP ^ LocalPort ^ RemoteIP ^ RemotePort);
         }
     }
 
+    public override string ToString() =>
+        $"{new IPAddress(LocalIP)}:{LocalPort}=>" +
+        $"{new IPAddress(RemoteIP)}:{RemotePort}({ProcessId})";
 }

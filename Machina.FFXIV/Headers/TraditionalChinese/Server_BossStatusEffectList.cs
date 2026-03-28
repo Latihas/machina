@@ -13,30 +13,27 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see<http://www.gnu.org/licenses/>.
 
-using System.Diagnostics;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Runtime.InteropServices;
 
-namespace Machina.FFXIV.Tests.Utility
+namespace Machina.FFXIV.Headers.TraditionalChinese
 {
-    [TestClass]
-    public class TestInfrastructure
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public unsafe struct Server_BossStatusEffectList
     {
-        public static MemoryTraceListener Listener { get; set; } = new();
-
-        [AssemblyInitialize]
-        public static void AssemblyInitialize(TestContext _1)
-        {
-            // set up listener
-            if (!Trace.Listeners.Contains(Listener))
-                _ = Trace.Listeners.Add(Listener);
-        }
-
-        [AssemblyCleanup]
-        public static void AssemblyCleanup()
-        {
-            // set up listener
-            if (Trace.Listeners.Contains(Listener))
-                Trace.Listeners.Remove(Listener);
-        }
+        public Server_MessageHeader MessageHeader; // 8 DWORDS
+        public fixed byte Effects2[30 * 3 * 4];
+        public byte JobID;
+        public byte Level1;
+        public byte Level2;
+        public byte Level3;
+        public uint CurrentHP;
+        public uint MaxHP;
+        public ushort CurrentMP;
+        public ushort MaxMP;
+        public byte DamageShield;
+        public ushort Unknown1;
+        public byte Unknown2;
+        public fixed byte Effects1[30 * 3 * 4];
+        public uint Unknown3;
     }
 }

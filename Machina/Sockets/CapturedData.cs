@@ -14,11 +14,9 @@
 // along with this program.  If not, see<http://www.gnu.org/licenses/>.
 
 
-namespace Machina.Sockets
-{
-    public struct CapturedData
-    {
-        public byte[] Buffer;
-        public int Size;
-    }
+namespace Machina.Sockets;
+
+public struct CapturedData {
+    public byte[] Buffer;
+    public int Size;
 }
