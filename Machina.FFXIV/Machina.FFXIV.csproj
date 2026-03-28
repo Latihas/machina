@@ -9,7 +9,7 @@
     <EmbeddedResource Include="Headers/Opcodes/Chinese.txt"/>
     <EmbeddedResource Include="Headers/Opcodes/Global.txt"/>
     <EmbeddedResource Include="Headers/Opcodes/TraditionalChinese.txt"/>
-    <EmbeddedResource Include="Headers\Opcodes\Korean.txt"/>
-    <ProjectReference Include="..\Machina\Machina.csproj"/>
+    <EmbeddedResource Include="Headers/Opcodes/Korean.txt"/>
+    <ProjectReference Include="../Machina/Machina.csproj"/>
   </ItemGroup>
 </Project>
