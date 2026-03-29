@@ -16,8 +16,8 @@
 namespace Machina.FFXIV;
 
 public enum GameRegion {
-    Global = 1,
-    Chinese = 2,
-    Korean = 3,
-    TraditionalChinese = 4
+	Global = 1,
+	Chinese = 2,
+	Korean = 3,
+	TraditionalChinese = 4
 }

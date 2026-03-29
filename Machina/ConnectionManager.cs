@@ -25,82 +25,82 @@ using Machina.Sockets;
 namespace Machina;
 
 public class ConnectionManager : IDisposable {
-    public TCPNetworkMonitorConfig Config { get; } = new();
-    public IList<TCPConnection> Connections { get; } = new List<TCPConnection>(2);
+	public TCPNetworkMonitorConfig Config { get; } = new();
+	public IList<TCPConnection> Connections { get; } = new List<TCPConnection>(2);
 
 
-    private readonly ProcessTCPInfo _processTCPInfo = new();
-    private bool _disposedValue;
+	private readonly ProcessTCPInfo _processTCPInfo = new();
+	private bool _disposedValue;
 
-    public void Refresh() {
-        // Update any filters
-        _processTCPInfo.ProcessID = Config.ProcessID;
-        _processTCPInfo.ProcessIDList = Config.ProcessIDList;
-        _processTCPInfo.ProcessWindowName = Config.WindowName;
-        _processTCPInfo.ProcessWindowClass = Config.WindowClass;
-        _processTCPInfo.LocalIP = Config.LocalIP;
+	public void Refresh() {
+		// Update any filters
+		_processTCPInfo.ProcessID = Config.ProcessID;
+		_processTCPInfo.ProcessIDList = Config.ProcessIDList;
+		_processTCPInfo.ProcessWindowName = Config.WindowName;
+		_processTCPInfo.ProcessWindowClass = Config.WindowClass;
+		_processTCPInfo.LocalIP = Config.LocalIP;
 
-        // todo: do not pass in current connections?
-        // get any active game connections
-        _processTCPInfo.UpdateTCPIPConnections(Connections);
+		// todo: do not pass in current connections?
+		// get any active game connections
+		_processTCPInfo.UpdateTCPIPConnections(Connections);
 
-        foreach (var connection in Connections) {
-            if (connection.Socket == null) {
-                // Set up decoders for data sent from local machine
-                connection.IPDecoderSend = new IPDecoder(connection.LocalIP, connection.RemoteIP, IPProtocol.TCP);
-                connection.TCPDecoderSend = new TCPDecoder(connection.LocalPort, connection.RemotePort);
+		foreach (var connection in Connections) {
+			if (connection.Socket == null) {
+				// Set up decoders for data sent from local machine
+				connection.IPDecoderSend = new IPDecoder(connection.LocalIP, connection.RemoteIP, IPProtocol.TCP);
+				connection.TCPDecoderSend = new TCPDecoder(connection.LocalPort, connection.RemotePort);
 
-                // set up decoders for data received by local machine
-                connection.IPDecoderReceive = new IPDecoder(connection.RemoteIP, connection.LocalIP, IPProtocol.TCP);
-                connection.TCPDecoderReceive = new TCPDecoder(connection.RemotePort, connection.LocalPort);
+				// set up decoders for data received by local machine
+				connection.IPDecoderReceive = new IPDecoder(connection.RemoteIP, connection.LocalIP, IPProtocol.TCP);
+				connection.TCPDecoderReceive = new TCPDecoder(connection.RemotePort, connection.LocalPort);
 
-                // set up socket
-                connection.Socket = Config.MonitorType == NetworkMonitorType.WinPCap ? new PCapCaptureSocket(Config.RPCap) : new RawCaptureSocket();
+				// set up socket
+				connection.Socket = Config.MonitorType == NetworkMonitorType.WinPCap ? new PCapCaptureSocket(Config.RPCap) : new RawCaptureSocket();
 
-                connection.Socket.StartCapture(connection.LocalIP, Config.UseRemoteIpFilter ? connection.RemoteIP : 0);
-            }
-        }
-    }
+				connection.Socket.StartCapture(connection.LocalIP, Config.UseRemoteIpFilter ? connection.RemoteIP : 0);
+			}
+		}
+	}
 
-    public void Cleanup() {
-        for (var i = 0; i < Connections.Count; i++) {
-            if (Connections[i].Socket != null) {
-                Trace.WriteLine("TCPNetworkMonitor: Stopping " + Config.MonitorType + " listener between [" +
-                                new IPAddress(Connections[i].LocalIP) + "] => [" +
-                                new IPAddress(Connections[i].RemoteIP) + "].", "DEBUG-MACHINA");
+	public void Cleanup() {
+		for (var i = 0; i < Connections.Count; i++) {
+			if (Connections[i].Socket != null) {
+				Trace.WriteLine("TCPNetworkMonitor: Stopping " + Config.MonitorType + " listener between [" +
+				                new IPAddress(Connections[i].LocalIP) + "] => [" +
+				                new IPAddress(Connections[i].RemoteIP) + "].", "DEBUG-MACHINA");
 
-                Connections[i].Socket.StopCapture();
-                Connections[i].Socket?.Dispose();
-                Connections[i].Socket = null;
-            }
-        }
+				Connections[i].Socket.StopCapture();
+				Connections[i].Socket?.Dispose();
+				Connections[i].Socket = null;
+			}
+		}
 
-        Connections.Clear();
-    }
+		Connections.Clear();
+	}
 
-    #region IDisposable
+	#region IDisposable
 
-    protected virtual void Dispose(bool disposing) {
-        if (!_disposedValue) {
-            if (disposing) {
-                for (var i = 0; i < Connections.Count; i++) {
-                    // Note: Do not call Trace in Dispose()
-                    Connections[i].Socket?.StopCapture();
-                    Connections[i].Socket?.Dispose();
-                    Connections[i].Socket = null;
-                }
-                Connections.Clear();
-            }
+	protected virtual void Dispose(bool disposing) {
+		if (!_disposedValue) {
+			if (disposing) {
+				for (var i = 0; i < Connections.Count; i++) {
+					// Note: Do not call Trace in Dispose()
+					Connections[i].Socket?.StopCapture();
+					Connections[i].Socket?.Dispose();
+					Connections[i].Socket = null;
+				}
+				Connections.Clear();
+			}
 
-            _disposedValue = true;
-        }
-    }
+			_disposedValue = true;
+		}
+	}
 
-    public void Dispose() {
-        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
+	public void Dispose() {
+		// Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+		Dispose(true);
+		GC.SuppressFinalize(this);
+	}
 
-    #endregion
+	#endregion
 }

@@ -19,8 +19,8 @@ namespace Machina.FFXIV.Headers.Chinese;
 
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
 public struct Server_UpdateHpMpTp {
-    public Server_MessageHeader MessageHeader; // 8 DWORDS
-    public uint CurrentHp;
-    public ushort CurrentMp;
-    public ushort Unknown1;
+	public Server_MessageHeader MessageHeader; // 8 DWORDS
+	public uint CurrentHp;
+	public ushort CurrentMp;
+	public ushort Unknown1;
 }

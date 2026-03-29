@@ -16,5 +16,5 @@
 namespace Machina.FFXIV.Oodle;
 
 public interface IOodleWrapper {
-    bool Decompress(byte[] payload, int offset, int compressedLength, byte[] plaintext, int decompressedLength);
+	bool Decompress(byte[] payload, int offset, int compressedLength, byte[] plaintext, int decompressedLength);
 }

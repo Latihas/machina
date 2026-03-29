@@ -17,6 +17,6 @@
 namespace Machina.Sockets;
 
 public struct CapturedData {
-    public byte[] Buffer;
-    public int Size;
+	public byte[] Buffer;
+	public int Size;
 }

@@ -22,59 +22,59 @@ using System.Net.Sockets;
 namespace Machina.Infrastructure;
 
 public static class InterfaceHelper {
-    public static string GetLocalIPv4(NetworkInterfaceType type = NetworkInterfaceType.Ethernet) {
-        // Repurposed from: http://stackoverflow.com/a/28621250/2685650.
+	public static string GetLocalIPv4(NetworkInterfaceType type = NetworkInterfaceType.Ethernet) {
+		// Repurposed from: http://stackoverflow.com/a/28621250/2685650.
 
-        return NetworkInterface
-                   .GetAllNetworkInterfaces()
-                   .FirstOrDefault(ni =>
-                       ni.NetworkInterfaceType == type
-                       && ni.OperationalStatus == OperationalStatus.Up
-                       && ni.GetIPProperties().GatewayAddresses.FirstOrDefault() != null
-                       && ni.GetIPProperties().UnicastAddresses.FirstOrDefault(ip => ip.Address.AddressFamily == AddressFamily.InterNetwork) != null
-                   )
-                   ?.GetIPProperties()
-                   .UnicastAddresses
-                   .FirstOrDefault(ip => ip.Address.AddressFamily == AddressFamily.InterNetwork)
-                   ?.Address
-                   ?.ToString()
-               ?? string.Empty;
-    }
+		return NetworkInterface
+			       .GetAllNetworkInterfaces()
+			       .FirstOrDefault(ni =>
+				       ni.NetworkInterfaceType == type
+				       && ni.OperationalStatus == OperationalStatus.Up
+				       && ni.GetIPProperties().GatewayAddresses.FirstOrDefault() != null
+				       && ni.GetIPProperties().UnicastAddresses.FirstOrDefault(ip => ip.Address.AddressFamily == AddressFamily.InterNetwork) != null
+			       )
+			       ?.GetIPProperties()
+			       .UnicastAddresses
+			       .FirstOrDefault(ip => ip.Address.AddressFamily == AddressFamily.InterNetwork)
+			       ?.Address
+			       ?.ToString()
+		       ?? string.Empty;
+	}
 
-    public static IPAddress[] GetAllIPAddresses() {
-        var _interfaces = NetworkInterface.GetAllNetworkInterfaces().ToList();
+	public static IPAddress[] GetAllIPAddresses() {
+		var _interfaces = NetworkInterface.GetAllNetworkInterfaces().ToList();
 
-        var ret = _interfaces
-            .Where(x => x.OperationalStatus == OperationalStatus.Up)
-            .Select(x => x.GetIPProperties())
-            .SelectMany(x => x.UnicastAddresses)
-            .Select(x => x.Address)
-            .Where(x => !x.IsIPv6LinkLocal)
-            .Where(x => (x.ToString() ?? "").Contains('.'))
-            .ToArray();
+		var ret = _interfaces
+			.Where(x => x.OperationalStatus == OperationalStatus.Up)
+			.Select(x => x.GetIPProperties())
+			.SelectMany(x => x.UnicastAddresses)
+			.Select(x => x.Address)
+			.Where(x => !x.IsIPv6LinkLocal)
+			.Where(x => (x.ToString() ?? "").Contains('.'))
+			.ToArray();
 
-        return ret;
-    }
+		return ret;
+	}
 
 
-    public static IList<string> GetNetworkInterfaceIPs() {
-        List<string> ret = [];
+	public static IList<string> GetNetworkInterfaceIPs() {
+		List<string> ret = [];
 
-        var interfaces = NetworkInterface.GetAllNetworkInterfaces();
+		var interfaces = NetworkInterface.GetAllNetworkInterfaces();
 
-        for (var i = 0; i < interfaces.Length; i++) {
-            if (interfaces[i].OperationalStatus != OperationalStatus.Up)
-                continue;
+		for (var i = 0; i < interfaces.Length; i++) {
+			if (interfaces[i].OperationalStatus != OperationalStatus.Up)
+				continue;
 
-            var ipProps = interfaces[i].GetIPProperties();
-            for (var j = 0; j < ipProps.UnicastAddresses.Count; j++) {
-                var ip = ipProps.UnicastAddresses[j]?.Address?.ToString() ?? "";
-                if (ip.Length <= 15 && ip.Contains('.')) // ipv4 addresses only
-                    if (!ret.Any(x => x == ip))
-                        ret.Add(ip);
-            }
-        }
+			var ipProps = interfaces[i].GetIPProperties();
+			for (var j = 0; j < ipProps.UnicastAddresses.Count; j++) {
+				var ip = ipProps.UnicastAddresses[j]?.Address?.ToString() ?? "";
+				if (ip.Length <= 15 && ip.Contains('.')) // ipv4 addresses only
+					if (!ret.Any(x => x == ip))
+						ret.Add(ip);
+			}
+		}
 
-        return ret;
-    }
+		return ret;
+	}
 }

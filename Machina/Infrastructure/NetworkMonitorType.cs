@@ -16,6 +16,6 @@
 namespace Machina.Infrastructure;
 
 public enum NetworkMonitorType {
-    RawSocket = 1,
-    WinPCap = 2
+	RawSocket = 1,
+	WinPCap = 2
 }

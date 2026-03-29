@@ -19,6 +19,6 @@ namespace Machina.FFXIV.Headers.Chinese;
 
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
 public unsafe struct Server_StatusEffectList3 {
-    public Server_MessageHeader MessageHeader; // 8 DWORDS
-    public fixed byte Effects[30 * 3 * 4];
+	public Server_MessageHeader MessageHeader; // 8 DWORDS
+	public fixed byte Effects[30 * 3 * 4];
 }
