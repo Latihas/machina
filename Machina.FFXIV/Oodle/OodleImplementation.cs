@@ -13,33 +13,34 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see<http://www.gnu.org/licenses/>.
 
-namespace Machina.FFXIV.Oodle;
+namespace Machina.FFXIV.Oodle
+{
+    public enum OodleImplementation
+    {
+        /// <summary>
+        /// Udp Network protocol, loads ffxiv_dx11.exe into process memory and invokes the Oodle library functions
+        /// </summary>
+        FfxivUdp = 1,
 
-public enum OodleImplementation {
-	/// <summary>
-	///     Udp Network protocol, loads ffxiv_dx11.exe into process memory and invokes the Oodle library functions
-	/// </summary>
-	FfxivUdp = 1,
+        /// <summary>
+        /// Udp network protocol, loads an oodle dll such as oo2net_9_win64.dll and invokes the Oodle library functions
+        /// </summary>
+        LibraryUdp = 2,
 
-	/// <summary>
-	///     Udp network protocol, loads an oodle dll such as oo2net_9_win64.dll and invokes the Oodle library functions
-	/// </summary>
-	LibraryUdp = 2,
+        /// <summary>
+        /// Default.  Tcp Network protocol, loads ffxiv_dx11.exe into process memory and invokes the Oodle library functions
+        /// </summary>
+        FfxivTcp = 3,
 
-	/// <summary>
-	///     Default.  Tcp Network protocol, loads ffxiv_dx11.exe into process memory and invokes the Oodle library functions
-	/// </summary>
-	FfxivTcp = 3,
+        /// <summary>
+        /// Tcp network protocol, loads an oodle dll such as oo2net_9_win64.dll and invokes the Oodle library functions
+        /// </summary>
+        LibraryTcp = 4,
 
-	/// <summary>
-	///     Tcp network protocol, loads an oodle dll such as oo2net_9_win64.dll and invokes the Oodle library functions
-	/// </summary>
-	LibraryTcp = 4,
-
-	/// <summary>
-	///     Default.  Tcp Network protocol, loads Korean version of ffxiv_dx11.exe into process memory and invokes the Oodle
-	///     library functions.
-	///     Note: this is the only version that works with the Korean game client.
-	/// </summary>
-	KoreanFfxivUdp = 5
+        /// <summary>
+        /// Default.  Tcp Network protocol, loads Korean version of ffxiv_dx11.exe into process memory and invokes the Oodle library functions.
+        ///   Note: this is the only version that works with the Korean game client.
+        /// </summary>
+        KoreanFfxivUdp = 5
+    }
 }

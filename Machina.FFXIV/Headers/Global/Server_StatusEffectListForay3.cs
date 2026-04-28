@@ -15,25 +15,27 @@
 
 using System.Runtime.InteropServices;
 
-namespace Machina.FFXIV.Headers;
-
-[StructLayout(LayoutKind.Sequential, Pack = 1)]
-public unsafe struct Server_StatusEffectListForay3 {
-	public Server_MessageHeader MessageHeader; // 8 DWORDS
-	public byte PhantomJobLevel;
-	public byte PhantomJobLevelSync;
-	public ushort unk1; // Always `0000` across ~4 hours of playtime, probably padding or used in future zones
-	public byte JobID;
-	public byte Level1;
-	public byte Level2;
-	public byte Level3;
-	public uint CurrentHP;
-	public uint MaxHP;
-	public ushort CurrentMP;
-	public ushort MaxMP;
-	public byte DamageShield;
-	public ushort Unknown1; // used to be TP
-	public byte Unknown2;
-	public fixed byte Effects[30 * 3 * 4];
-	// no padding at end
+namespace Machina.FFXIV.Headers
+{
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public unsafe struct Server_StatusEffectListForay3
+    {
+        public Server_MessageHeader MessageHeader; // 8 DWORDS
+        public byte PhantomJobLevel;
+        public byte PhantomJobLevelSync;
+        public ushort unk1; // Always `0000` across ~4 hours of playtime, probably padding or used in future zones
+        public byte JobID;
+        public byte Level1;
+        public byte Level2;
+        public byte Level3;
+        public uint CurrentHP;
+        public uint MaxHP;
+        public ushort CurrentMP;
+        public ushort MaxMP;
+        public byte DamageShield;
+        public ushort Unknown1; // used to be TP
+        public byte Unknown2;
+        public fixed byte Effects[30 * 3 * 4];
+        // no padding at end
+    }
 }
