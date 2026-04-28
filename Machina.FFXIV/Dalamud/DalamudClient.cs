@@ -1,76 +1,96 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Collections.Concurrent;
 
-namespace Machina.FFXIV.Dalamud;
+namespace Machina.FFXIV.Dalamud
+{
+    public class DalamudClient : IDisposable
+    {
+        public static ConcurrentQueue<(long, byte[])> MessageQueue;
 
-public class DalamudClient : IDisposable {
-	public static ConcurrentQueue<(long, byte[])> MessageQueue;
+        public delegate void MessageReceivedHandler(long epoch, byte[] message);
+        public MessageReceivedHandler MessageReceived;
 
-	public delegate void MessageReceivedHandler(long epoch, byte[] message);
+        private CancellationTokenSource _tokenSource;
 
-	public MessageReceivedHandler MessageReceived;
-
-	private CancellationTokenSource _tokenSource;
-
-	private DateTime _lastLoopError;
+        private DateTime _lastLoopError;
 
 
-	public void OnMessageReceived(long epoch, byte[] message) {
-		MessageReceived?.Invoke(epoch, message);
-	}
+        public void OnMessageReceived(long epoch, byte[] message)
+        {
+            MessageReceived?.Invoke(epoch, message);
+        }
 
-	public void Connect() {
-		MessageQueue = new ConcurrentQueue<(long, byte[])>();
+        public void Connect()
+        {
+            MessageQueue = new ConcurrentQueue<(long, byte[])>();
 
-		_tokenSource = new CancellationTokenSource();
+            _tokenSource = new CancellationTokenSource();
 
-		Task.Run(() => ProcessReadLoop(_tokenSource.Token));
-	}
+             Task.Run(() => ProcessReadLoop(_tokenSource.Token));
+        }
 
-	private void ProcessReadLoop(CancellationToken token) {
-		try {
-			while (!token.IsCancellationRequested) {
-				try {
-					while (MessageQueue.TryDequeue(out var messageInfo)) {
-						OnMessageReceived(messageInfo.Item1, messageInfo.Item2);
-					}
+        private void ProcessReadLoop(CancellationToken token)
+        {
+            try
+            {
+                while (!token.IsCancellationRequested)
+                {
+                    try
+                    {
+                        while (MessageQueue.TryDequeue(out var messageInfo))
+                        {
+                            OnMessageReceived(messageInfo.Item1, messageInfo.Item2);
+                        }
 
-					Task.Delay(10, token).Wait(token);
-				} catch (OperationCanceledException) {
-				} catch (Exception ex) {
-					if (DateTime.UtcNow.Subtract(_lastLoopError).TotalSeconds > 5)
-						Trace.WriteLine("DalamudClient: Error in inner ProcessReadLoop. " + ex, "DEBUG-MACHINA");
-					_lastLoopError = DateTime.UtcNow;
-				}
-			}
-		} catch (OperationCanceledException) {
-		} catch (Exception ex) {
-			Trace.WriteLine("DalamudClient: Error in outer ProcessReadLoop. " + ex, "DEBUG-MACHINA");
-		}
-	}
+                        Task.Delay(10, token).Wait(token);
+                    }
+                    catch (OperationCanceledException)
+                    {
 
-	public void Disconnect() {
-		_tokenSource?.Cancel();
-		_tokenSource?.Dispose();
-		_tokenSource = null;
-		MessageQueue?.Clear();
-		MessageQueue = null;
-	}
+                    }
+                    catch (Exception ex)
+                    {
+                        if (DateTime.UtcNow.Subtract(_lastLoopError).TotalSeconds > 5)
+                            Trace.WriteLine("DalamudClient: Error in inner ProcessReadLoop. " + ex.ToString(), "DEBUG-MACHINA");
+                        _lastLoopError = DateTime.UtcNow;
+                    }
 
-	#region IDisposable
+                }
+            }
+            catch (OperationCanceledException)
+            {
 
-	protected virtual void Dispose(bool disposing) {
-		Disconnect();
-	}
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine("DalamudClient: Error in outer ProcessReadLoop. " + ex.ToString(), "DEBUG-MACHINA");
+            }
+        }
 
-	public void Dispose() {
-		// Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-		Dispose(true);
-		GC.SuppressFinalize(this);
-	}
+        public void Disconnect()
+        {
+            _tokenSource?.Cancel();
+            _tokenSource?.Dispose();
+            _tokenSource = null;
+            MessageQueue?.Clear();
+            MessageQueue = null;
+        }
 
-	#endregion
+        #region IDisposable
+        protected virtual void Dispose(bool disposing)
+        {
+            Disconnect();
+        }
+
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+        #endregion
+    }
 }
