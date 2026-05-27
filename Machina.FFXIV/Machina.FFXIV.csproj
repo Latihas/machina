@@ -13,4 +13,3 @@
     <ProjectReference Include="../Machina/Machina.csproj"/>
   </ItemGroup>
 </Project>
-</Project>
