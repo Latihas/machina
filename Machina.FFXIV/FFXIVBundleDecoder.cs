@@ -32,7 +32,7 @@ public class FFXIVBundleDecoder {
 
 	private IOodleWrapper _oodle;
 
-	public Queue<Tuple<long, byte[]>> Messages = new(20);
+	public readonly Queue<Tuple<long, byte[]>> Messages = new(20);
 
 	public DateTime LastMessageTimestamp { get; set; } = DateTime.MinValue;
 
@@ -154,10 +154,9 @@ public class FFXIVBundleDecoder {
 					// inflate the packet using built-in .net function.  Note that the first two bytes of the data are skipped, since this 
 					//  appears to be a standard zlib deflated buffer
 					MemoryStream ms = new(buffer, offset + 42, (int)header.length - 42);
-					using (DeflateStream ds = new(ms, CompressionMode.Decompress)) {
-						// todo: need more graceful way of determing decompressed size!
-						ffxivMessageSize = ds.Read(_decompressionBuffer, 0, _decompressionBuffer.Length);
-					}
+					using DeflateStream ds = new(ms, CompressionMode.Decompress);
+					// todo: need more graceful way of determing decompressed size!
+					ffxivMessageSize = ds.Read(_decompressionBuffer, 0, _decompressionBuffer.Length);
 				} catch (Exception ex) {
 					Trace.WriteLine("FFXIVBundleDecoder: Decompression error: " + ex, "DEBUG-MACHINA");
 					return null;

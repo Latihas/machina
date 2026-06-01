@@ -173,11 +173,9 @@ public static class DeucalionInjector {
     }
 
     public static byte[] CalculateChecksum(string filename) {
-        using (var hashAlgo = SHA256.Create()) {
-            using (var stream = File.OpenRead(filename)) {
-                return hashAlgo.ComputeHash(stream);
-            }
-        }
+	    using var hashAlgo = SHA256.Create();
+	    using var stream = File.OpenRead(filename);
+	    return hashAlgo.ComputeHash(stream);
     }
 
     public static bool InjectLibrary(int processId) {
