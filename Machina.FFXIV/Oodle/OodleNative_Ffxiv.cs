@@ -134,44 +134,34 @@ public class OodleNative_Ffxiv : IOodleNative {
 				Marshal.Copy(BitConverter.GetBytes(myFreePtr.ToInt64()), 0, IntPtr.Add(_libraryHandle, _offsets[SignatureType.OodleFree]), IntPtr.Size);
 
 				if (_offsets.TryGetValue(SignatureType.OodleNetwork1UDP_State_Size, out var offset))
-					_OodleNetwork1UDP_State_Size = (OodleNetwork1UDP_State_Size_Func)Marshal.GetDelegateForFunctionPointer(
-						IntPtr.Add(_libraryHandle, offset), typeof(OodleNetwork1UDP_State_Size_Func));
+					_OodleNetwork1UDP_State_Size = Marshal.GetDelegateForFunctionPointer<OodleNetwork1UDP_State_Size_Func>(IntPtr.Add(_libraryHandle, offset));
 
 				if (_offsets.TryGetValue(SignatureType.OodleNetwork1TCP_State_Size, out var offset1))
-					_OodleNetwork1TCP_State_Size = (OodleNetwork1TCP_State_Size_Func)Marshal.GetDelegateForFunctionPointer(
-						IntPtr.Add(_libraryHandle, offset1), typeof(OodleNetwork1TCP_State_Size_Func));
+					_OodleNetwork1TCP_State_Size = Marshal.GetDelegateForFunctionPointer<OodleNetwork1TCP_State_Size_Func>(IntPtr.Add(_libraryHandle, offset1));
 
 				if (_offsets.TryGetValue(SignatureType.OodleNetwork1_Shared_Size, out var offset2))
-					_OodleNetwork1_Shared_Size = (OodleNetwork1_Shared_Size_Func)Marshal.GetDelegateForFunctionPointer(
-						IntPtr.Add(_libraryHandle, offset2), typeof(OodleNetwork1_Shared_Size_Func));
+					_OodleNetwork1_Shared_Size = Marshal.GetDelegateForFunctionPointer<OodleNetwork1_Shared_Size_Func>(IntPtr.Add(_libraryHandle, offset2));
 
 				if (_offsets.TryGetValue(SignatureType.OodleNetwork1_Shared_SetWindow, out var offset3))
-					_OodleNetwork1_Shared_SetWindow = (OodleNetwork1_Shared_SetWindow_Action)Marshal.GetDelegateForFunctionPointer(
-						IntPtr.Add(_libraryHandle, offset3), typeof(OodleNetwork1_Shared_SetWindow_Action));
+					_OodleNetwork1_Shared_SetWindow = Marshal.GetDelegateForFunctionPointer<OodleNetwork1_Shared_SetWindow_Action>(IntPtr.Add(_libraryHandle, offset3));
 
 				if (_offsets.TryGetValue(SignatureType.OodleNetwork1UDP_Train, out var offset4))
-					_OodleNetwork1UDP_Train = (OodleNetwork1UDP_Train_Action)Marshal.GetDelegateForFunctionPointer(
-						IntPtr.Add(_libraryHandle, offset4), typeof(OodleNetwork1UDP_Train_Action));
+					_OodleNetwork1UDP_Train = Marshal.GetDelegateForFunctionPointer<OodleNetwork1UDP_Train_Action>(IntPtr.Add(_libraryHandle, offset4));
 
 				if (_offsets.TryGetValue(SignatureType.OodleNetwork1TCP_Train, out var offset5))
-					_OodleNetwork1TCP_Train = (OodleNetwork1TCP_Train_Action)Marshal.GetDelegateForFunctionPointer(
-						IntPtr.Add(_libraryHandle, offset5), typeof(OodleNetwork1TCP_Train_Action));
+					_OodleNetwork1TCP_Train = Marshal.GetDelegateForFunctionPointer<OodleNetwork1TCP_Train_Action>(IntPtr.Add(_libraryHandle, offset5));
 
 				if (_offsets.TryGetValue(SignatureType.OodleNetwork1UDP_Decode, out var offset6))
-					_OodleNetwork1UDP_Decode = (OodleNetwork1UDP_Decode_Func)Marshal.GetDelegateForFunctionPointer(
-						IntPtr.Add(_libraryHandle, offset6), typeof(OodleNetwork1UDP_Decode_Func));
+					_OodleNetwork1UDP_Decode = Marshal.GetDelegateForFunctionPointer<OodleNetwork1UDP_Decode_Func>(IntPtr.Add(_libraryHandle, offset6));
 
 				if (_offsets.TryGetValue(SignatureType.OodleNetwork1TCP_Decode, out var offset7))
-					_OodleNetwork1TCP_Decode = (OodleNetwork1TCP_Decode_Func)Marshal.GetDelegateForFunctionPointer(
-						IntPtr.Add(_libraryHandle, offset7), typeof(OodleNetwork1TCP_Decode_Func));
+					_OodleNetwork1TCP_Decode = Marshal.GetDelegateForFunctionPointer<OodleNetwork1TCP_Decode_Func>(IntPtr.Add(_libraryHandle, offset7));
 
 				if (_offsets.TryGetValue(SignatureType.OodleNetwork1UDP_Encode, out var offset8))
-					_OodleNetwork1UDP_Encode = (OodleNetwork1UDP_Encode_Func)Marshal.GetDelegateForFunctionPointer(
-						IntPtr.Add(_libraryHandle, offset8), typeof(OodleNetwork1UDP_Encode_Func));
+					_OodleNetwork1UDP_Encode = Marshal.GetDelegateForFunctionPointer<OodleNetwork1UDP_Encode_Func>(IntPtr.Add(_libraryHandle, offset8));
 
 				if (_offsets.TryGetValue(SignatureType.OodleNetwork1TCP_Encode, out var offset9))
-					_OodleNetwork1TCP_Encode = (OodleNetwork1TCP_Encode_Func)Marshal.GetDelegateForFunctionPointer(
-						IntPtr.Add(_libraryHandle, offset9), typeof(OodleNetwork1TCP_Encode_Func));
+					_OodleNetwork1TCP_Encode = Marshal.GetDelegateForFunctionPointer<OodleNetwork1TCP_Encode_Func>(IntPtr.Add(_libraryHandle, offset9));
 
 				if (_OodleNetwork1TCP_State_Size == null || _OodleNetwork1_Shared_Size == null || _OodleNetwork1_Shared_SetWindow == null ||
 				    _OodleNetwork1TCP_Decode == null || _OodleNetwork1TCP_Encode == null || _OodleNetwork1TCP_Train == null) {

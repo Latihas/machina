@@ -70,44 +70,34 @@ public class OodleNative_Library : IOodleNative {
 				Trace.WriteLine($"{nameof(OodleNative_Library)}: Loaded oodle library from path {path}.", "DEBUG-MACHINA");
 
 				var address = NativeMethods.GetProcAddress(_libraryHandle, nameof(OodleNetwork1UDP_State_Size));
-				_OodleNetwork1UDP_State_Size = (OodleNetwork1UDP_State_Size_Func)Marshal.GetDelegateForFunctionPointer(
-					address, typeof(OodleNetwork1UDP_State_Size_Func));
+				_OodleNetwork1UDP_State_Size = Marshal.GetDelegateForFunctionPointer<OodleNetwork1UDP_State_Size_Func>(address);
 
 				address = NativeMethods.GetProcAddress(_libraryHandle, nameof(OodleNetwork1TCP_State_Size));
-				_OodleNetwork1TCP_State_Size = (OodleNetwork1TCP_State_Size_Func)Marshal.GetDelegateForFunctionPointer(
-					address, typeof(OodleNetwork1TCP_State_Size_Func));
+				_OodleNetwork1TCP_State_Size = Marshal.GetDelegateForFunctionPointer<OodleNetwork1TCP_State_Size_Func>(address);
 
 				address = NativeMethods.GetProcAddress(_libraryHandle, nameof(OodleNetwork1_Shared_Size));
-				_OodleNetwork1_Shared_Size = (OodleNetwork1_Shared_Size_Func)Marshal.GetDelegateForFunctionPointer(
-					address, typeof(OodleNetwork1_Shared_Size_Func));
+				_OodleNetwork1_Shared_Size = Marshal.GetDelegateForFunctionPointer<OodleNetwork1_Shared_Size_Func>(address);
 
 				address = NativeMethods.GetProcAddress(_libraryHandle, nameof(OodleNetwork1_Shared_SetWindow));
-				_OodleNetwork1_Shared_SetWindow = (OodleNetwork1_Shared_SetWindow_Action)Marshal.GetDelegateForFunctionPointer(
-					address, typeof(OodleNetwork1_Shared_SetWindow_Action));
+				_OodleNetwork1_Shared_SetWindow = Marshal.GetDelegateForFunctionPointer<OodleNetwork1_Shared_SetWindow_Action>(address);
 
 				address = NativeMethods.GetProcAddress(_libraryHandle, nameof(OodleNetwork1UDP_Train));
-				_OodleNetwork1UDP_Train = (OodleNetwork1UDP_Train_Action)Marshal.GetDelegateForFunctionPointer(
-					address, typeof(OodleNetwork1UDP_Train_Action));
+				_OodleNetwork1UDP_Train = Marshal.GetDelegateForFunctionPointer<OodleNetwork1UDP_Train_Action>(address);
 
 				address = NativeMethods.GetProcAddress(_libraryHandle, nameof(OodleNetwork1TCP_Train));
-				_OodleNetwork1TCP_Train = (OodleNetwork1TCP_Train_Action)Marshal.GetDelegateForFunctionPointer(
-					address, typeof(OodleNetwork1TCP_Train_Action));
+				_OodleNetwork1TCP_Train = Marshal.GetDelegateForFunctionPointer<OodleNetwork1TCP_Train_Action>(address);
 
 				address = NativeMethods.GetProcAddress(_libraryHandle, nameof(OodleNetwork1UDP_Decode));
-				_OodleNetwork1UDP_Decode = (OodleNetwork1UDP_Decode_Func)Marshal.GetDelegateForFunctionPointer(
-					address, typeof(OodleNetwork1UDP_Decode_Func));
+				_OodleNetwork1UDP_Decode = Marshal.GetDelegateForFunctionPointer<OodleNetwork1UDP_Decode_Func>(address);
 
 				address = NativeMethods.GetProcAddress(_libraryHandle, nameof(OodleNetwork1TCP_Decode));
-				_OodleNetwork1TCP_Decode = (OodleNetwork1TCP_Decode_Func)Marshal.GetDelegateForFunctionPointer(
-					address, typeof(OodleNetwork1TCP_Decode_Func));
+				_OodleNetwork1TCP_Decode = Marshal.GetDelegateForFunctionPointer<OodleNetwork1TCP_Decode_Func>(address);
 
 				address = NativeMethods.GetProcAddress(_libraryHandle, nameof(OodleNetwork1UDP_Encode));
-				_OodleNetwork1UDP_Encode = (OodleNetwork1UDP_Encode_Func)Marshal.GetDelegateForFunctionPointer(
-					address, typeof(OodleNetwork1UDP_Encode_Func));
+				_OodleNetwork1UDP_Encode = Marshal.GetDelegateForFunctionPointer<OodleNetwork1UDP_Encode_Func>(address);
 
 				address = NativeMethods.GetProcAddress(_libraryHandle, nameof(OodleNetwork1UDP_Encode));
-				_OodleNetwork1TCP_Encode = (OodleNetwork1TCP_Encode_Func)Marshal.GetDelegateForFunctionPointer(
-					address, typeof(OodleNetwork1TCP_Encode_Func));
+				_OodleNetwork1TCP_Encode = Marshal.GetDelegateForFunctionPointer<OodleNetwork1TCP_Encode_Func>(address);
 
 				Initialized = true;
 			}

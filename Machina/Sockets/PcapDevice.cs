@@ -39,7 +39,7 @@ internal class PcapDevice {
 
 			var ip = deviceListPtr;
 			while (ip != IntPtr.Zero) {
-				var dev = (pcap_if)Marshal.PtrToStructure(ip, typeof(pcap_if));
+				var dev = Marshal.PtrToStructure<pcap_if>(ip);
 
 				PcapDevice device = new() {
 					Name = dev.name,

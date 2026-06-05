@@ -67,7 +67,7 @@ public class SigScan : ISigScan {
 
 	public unsafe Dictionary<SignatureType, int> Read(IntPtr library) {
 		Dictionary<SignatureType, int> ret = new();
-		List<SignatureType> signatureTypes = new((SignatureType[])Enum.GetValues(typeof(SignatureType)));
+		List<SignatureType> signatureTypes = new(Enum.GetValues<SignatureType>());
 
 		NativeMethods.MODULEINFO info = new();
 		if (!NativeMethods.GetModuleInformation(Process.GetCurrentProcess().Handle, library, out info, (uint)sizeof(NativeMethods.MODULEINFO))) {
@@ -77,8 +77,6 @@ public class SigScan : ISigScan {
 
 		var startAddress = info.lpBaseOfDll;
 		var maxAddress = IntPtr.Add(info.lpBaseOfDll, (int)info.SizeOfImage);
-
-		var currentAddress = startAddress;
 
 		var maxBytePatternLength = Signatures.Values.Max(x => x?.Length ?? 0);
 
@@ -90,10 +88,10 @@ public class SigScan : ISigScan {
 			}
 
 			var offset = GetFirstSignatureOccurrence(Signatures[signatureTypes[i]],
-				currentAddress, (int)info.SizeOfImage);
+				startAddress, (int)info.SizeOfImage);
 
 			if (offset > 0) {
-				var signature = GetSignaturefromOffset(currentAddress, startAddress, offset);
+				var signature = GetSignaturefromOffset(startAddress, startAddress, offset);
 				ret.Add(signatureTypes[i], signature);
 
 				Trace.WriteLine($"Found Signature [{signatureTypes[i]}] at offset [{signature:X8}]", "DEBUG-MACHINA");
