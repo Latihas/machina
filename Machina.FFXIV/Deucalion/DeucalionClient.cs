@@ -433,7 +433,7 @@ public class DeucalionClient : IDisposable {
     public void Disconnect() {
         _tokenSource?.Cancel();
 
-        if (_clientStream != null && _clientStream.IsConnected) {
+        if (_clientStream is { IsConnected: true }) {
             //_clientStream.Flush();
             _clientStream.Close();
         }
