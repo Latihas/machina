@@ -29,7 +29,7 @@ public static class OodleFactory {
 
 			// Note: Do not re-initialize if not changing implementation type.
 			if (implementation == OodleImplementation.LibraryTcp || implementation == OodleImplementation.LibraryUdp) {
-				if (!(_oodleNative is OodleNative_Library))
+				if (_oodleNative is not OodleNative_Library)
 					_oodleNative?.UnInitialize();
 				else
 					return;
