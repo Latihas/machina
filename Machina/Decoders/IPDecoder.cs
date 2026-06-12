@@ -177,8 +177,8 @@ public class IPDecoder {
 		ushort fragmentOffset = 0;
 		byte[] payload = null;
 
-		for (var i = 0; i < nextFragments.Count; i++) {
-			fixed (byte* ptr = nextFragments[i]) {
+		foreach (var t in nextFragments) {
+			fixed (byte* ptr = t) {
 				var ip4Header = *(IPv4Header*)ptr;
 
 				// every new ID resets the internal state - we dont need to return in order.
@@ -189,51 +189,44 @@ public class IPDecoder {
 				}
 
 				// skip for now if the offset is incorrect, the correct packet may come soon.
-				if (ip4Header.FragmentOffset == fragmentOffset) {
-					// correction for fragmented packet
-					// note: ip4Header.length may be zero if using hardwre offloading to network card.
-					var fragmentDataSize = ip4Header.Length == 0 && ip4Header.Id != 0
-						? nextFragments[i].Length - ip4Header.HeaderLength
-						: ip4Header.Length - ip4Header.HeaderLength;
+				if (ip4Header.FragmentOffset != fragmentOffset) continue;
+				// correction for fragmented packet
+				// note: ip4Header.length may be zero if using hardwre offloading to network card.
+				var fragmentDataSize = ip4Header.Length == 0 && ip4Header.Id != 0
+					? t.Length - ip4Header.HeaderLength
+					: ip4Header.Length - ip4Header.HeaderLength;
 
-					// resize payload array
-					if (payload == null)
-						payload = new byte[fragmentDataSize];
+				// resize payload array
+				payload ??= new byte[fragmentDataSize];
 
-					// if this is a fragment, prepare array to accept it and record last fragment time.
-					if (ip4Header.FragmentOffset > 0) {
-						LastIPFragmentTimestamp = DateTime.Now;
-						Array.Resize(ref payload, payload.Length + fragmentDataSize);
-					}
+				// if this is a fragment, prepare array to accept it and record last fragment time.
+				if (ip4Header.FragmentOffset > 0) {
+					LastIPFragmentTimestamp = DateTime.Now;
+					Array.Resize(ref payload, payload.Length + fragmentDataSize);
+				}
 
-					// copy packet into payload
-					Array.Copy(nextFragments[i], ip4Header.HeaderLength, payload, fragmentOffset, fragmentDataSize);
+				// copy packet into payload
+				Array.Copy(t, ip4Header.HeaderLength, payload, fragmentOffset, fragmentDataSize);
 
-					// add data offset
-					fragmentOffset += (ushort)fragmentDataSize;
+				// add data offset
+				fragmentOffset += (ushort)fragmentDataSize;
 
-					// return payload if this is the final fragment
-					if ((ip4Header.Flags & (byte)IPFragment.MF) == 0) {
-						// purge current fragments 
-						if (Fragments.Count == 1) // optimize single packet processing
-							Fragments.Clear();
-						else {
-							// remove in reverse order to prevent IEnumerable issues.
-							for (var j = Fragments.Count - 1; j >= 0; j--) {
-								if (ConversionUtility.ntohs(BitConverter.ToUInt16(Fragments[j], 4)) == currentId)
-									Fragments.RemoveAt(j);
-								else if (ConversionUtility.ntohs(BitConverter.ToUInt16(Fragments[j], 4)) < currentId - 99) {
-									Fragments.RemoveAt(j);
-								}
-							}
-						}
-
-						return payload;
+				// return payload if this is the final fragment
+				if ((ip4Header.Flags & (byte)IPFragment.MF) != 0) continue;
+				// purge current fragments 
+				if (Fragments.Count == 1) // optimize single packet processing
+					Fragments.Clear();
+				else {
+					// remove in reverse order to prevent IEnumerable issues.
+					for (var j = Fragments.Count - 1; j >= 0; j--) {
+						if (ConversionUtility.ntohs(BitConverter.ToUInt16(Fragments[j], 4)) == currentId || ConversionUtility.ntohs(BitConverter.ToUInt16(Fragments[j], 4)) < currentId - 99)
+							Fragments.RemoveAt(j);
 					}
 				}
+
+				return payload;
 			}
 		}
-
 		return null;
 	}
 }

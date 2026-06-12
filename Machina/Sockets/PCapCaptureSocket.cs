@@ -42,10 +42,11 @@ public class PCapCaptureSocket : ICaptureSocket {
 	}
 
 	public PCapCaptureSocket(RPCapConf config) {
-		_auth = new pcap_rmtauth();
-		_auth.username = config.username;
-		_auth.password = config.password;
-		_auth.type = string.IsNullOrEmpty(config.username) ? RPCAP_RMTAUTH_NULL : RPCAP_RMTAUTH_PWD;
+		_auth = new pcap_rmtauth {
+			username = config.username,
+			password = config.password,
+			type = string.IsNullOrEmpty(config.username) ? RPCAP_RMTAUTH_NULL : RPCAP_RMTAUTH_PWD
+		};
 		_file = config.file;
 		_source = BuildSource(config.host, config.port);
 		Trace.WriteLine($"PCapCaptureSocket: Capture source was set to [{_source}].", "DEBUG-MACHINA");

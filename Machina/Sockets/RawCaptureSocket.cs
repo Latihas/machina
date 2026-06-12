@@ -18,13 +18,14 @@ using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 
 namespace Machina.Sockets;
 
 public class RawCaptureSocket : ICaptureSocket {
-	private readonly int BUFFER_SIZE = 1024 * 64 + 1;
+	private const int BUFFER_SIZE = 1024 * 64 + 1;
 
-	private readonly object _lockObject = new();
+	private readonly Lock _lockObject = new();
 
 	private Socket _socket;
 	private ConcurrentQueue<byte[]> _pendingBuffers;
@@ -138,28 +139,25 @@ public class RawCaptureSocket : ICaptureSocket {
 	}
 
 	private void FreeBuffers() {
-		if (_currentBuffer != null) {
-			_currentBuffer = null;
-		}
-		if (_pendingBuffers?.Count > 0) {
-			while (_pendingBuffers.TryDequeue(out _)) {
-			}
+		_currentBuffer = null;
+
+		if (!(_pendingBuffers?.Count > 0)) return;
+		while (_pendingBuffers.TryDequeue(out _)) {
 		}
 	}
 
 	#region IDisposable
 
 	protected virtual void Dispose(bool disposing) {
-		if (!_disposedValue) {
-			if (disposing) {
-				_socket?.Dispose();
-				_socket = null;
+		if (_disposedValue) return;
+		if (disposing) {
+			_socket?.Dispose();
+			_socket = null;
 
-				FreeBuffers();
-			}
-
-			_disposedValue = true;
+			FreeBuffers();
 		}
+
+		_disposedValue = true;
 	}
 
 	public void Dispose() {

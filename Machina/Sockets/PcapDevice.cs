@@ -29,7 +29,6 @@ internal class PcapDevice {
 	public static unsafe IList<PcapDevice> GetAllDevices(string source, ref pcap_rmtauth auth) {
 		List<PcapDevice> deviceList = [];
 		var deviceListPtr = IntPtr.Zero;
-		IntPtr currentAddress;
 
 		try {
 			StringBuilder errorBuffer = new(PCAP_ERRBUF_SIZE);
@@ -46,7 +45,7 @@ internal class PcapDevice {
 					Description = dev.description,
 					Addresses = new List<uint>()
 				};
-				currentAddress = dev.addresses;
+				var currentAddress = dev.addresses;
 
 				while (currentAddress != IntPtr.Zero) {
 					var address = *(pcap_addr*)currentAddress;

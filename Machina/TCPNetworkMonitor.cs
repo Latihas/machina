@@ -141,16 +141,14 @@ public class TCPNetworkMonitor : IDisposable {
 	}
 
 	private void ProcessNetworkData() {
-		byte[] tcpbuffer;
-		byte[] payloadBuffer;
-
-		for (var i = 0; i < _connectionManager.Connections.Count; i++) {
-			var connection = _connectionManager.Connections[i];
+		foreach (var connection in _connectionManager.Connections) {
 			CapturedData data;
 
 			while ((data = connection.Socket.Receive()).Size > 0) {
 				connection.IPDecoderSend.FilterAndStoreData(data.Buffer, data.Size);
 
+				byte[] tcpbuffer;
+				byte[] payloadBuffer;
 				while ((tcpbuffer = connection.IPDecoderSend.GetNextIPPayload()) != null) {
 					connection.TCPDecoderSend.FilterAndStoreData(tcpbuffer);
 					while ((payloadBuffer = connection.TCPDecoderSend.GetNextTCPDatagram()) != null)
@@ -170,14 +168,13 @@ public class TCPNetworkMonitor : IDisposable {
 	#region IDisposable
 
 	protected virtual void Dispose(bool disposing) {
-		if (!_disposedValue) {
-			if (disposing) {
-				_monitorTask?.Dispose();
-				_tokenSource?.Dispose();
-				_connectionManager.Dispose();
-			}
-			_disposedValue = true;
+		if (_disposedValue) return;
+		if (disposing) {
+			_monitorTask?.Dispose();
+			_tokenSource?.Dispose();
+			_connectionManager.Dispose();
 		}
+		_disposedValue = true;
 	}
 
 	public void Dispose() {

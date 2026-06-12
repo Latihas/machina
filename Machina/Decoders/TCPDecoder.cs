@@ -33,14 +33,12 @@ public class TCPDecoder {
 	/// <summary>
 	///     Collection containing current unprocessed TCP datagrams
 	/// </summary>
-	public IList<byte[]> Packets { get; }
-		= new List<byte[]>();
+	public IList<byte[]> Packets { get; } = new List<byte[]>();
 
 	/// <summary>
 	///     Timestamp of last processed packet
 	/// </summary>
-	public DateTime LastPacketTimestamp { get; internal set; }
-		= DateTime.MinValue;
+	public DateTime LastPacketTimestamp { get; internal set; } = DateTime.MinValue;
 
 	// expected sequence number of the next TCP datagram
 	private uint _NextSequence;
@@ -104,8 +102,8 @@ public class TCPDecoder {
 			packets.Sort((x, y) => ConversionUtility.ntohl(BitConverter.ToUInt32(x, 4))
 				.CompareTo(ConversionUtility.ntohl(BitConverter.ToUInt32(y, 4))));
 		}
-		for (var i = 0; i < packets.Count; i++) {
-			fixed (byte* ptr = packets[i]) {
+		foreach (var t in packets) {
+			fixed (byte* ptr = t) {
 				var header = *(TCPHeader*)ptr;
 
 				// failsafe - if starting, or just reset, start with next available packet.
@@ -134,25 +132,25 @@ public class TCPDecoder {
 						packetOffset = _NextSequence - header.SequenceNumber;
 
 					// do not process this packet if it was previously fully processed, or has no data.
-					if (packetOffset >= packets[i].Length - header.DataOffset) {
+					if (packetOffset >= t.Length - header.DataOffset) {
 						// this packet will get removed once we exit the loop.
 						Trace.WriteLine(
-							$"TCPDecoder: packet data already processed, expected sequence [{_NextSequence}], received [{header.SequenceNumber}], size [{packets[i].Length - header.DataOffset}].  Data: {ConversionUtility.ByteArrayToHexString(packets[i], 0, 50)}",
+							$"TCPDecoder: packet data already processed, expected sequence [{_NextSequence}], received [{header.SequenceNumber}], size [{t.Length - header.DataOffset}].  Data: {ConversionUtility.ByteArrayToHexString(t, 0, 50)}",
 							"DEBUG-MACHINA");
 						continue;
 					}
 
 					if (buffer == null) {
-						buffer = new byte[packets[i].Length - header.DataOffset - packetOffset];
-						Array.Copy(packets[i], header.DataOffset + packetOffset, buffer, 0, packets[i].Length - header.DataOffset - packetOffset);
+						buffer = new byte[t.Length - header.DataOffset - packetOffset];
+						Array.Copy(t, header.DataOffset + packetOffset, buffer, 0, t.Length - header.DataOffset - packetOffset);
 					} else {
 						var oldSize = buffer.Length;
-						Array.Resize(ref buffer, buffer.Length + (packets[i].Length - header.DataOffset - (int)packetOffset));
-						Array.Copy(packets[i], header.DataOffset + packetOffset, buffer, oldSize, packets[i].Length - header.DataOffset - packetOffset);
+						Array.Resize(ref buffer, buffer.Length + (t.Length - header.DataOffset - (int)packetOffset));
+						Array.Copy(t, header.DataOffset + packetOffset, buffer, oldSize, t.Length - header.DataOffset - packetOffset);
 					}
 
 					// NOTE: do not need to correct for packetOffset here.
-					_NextSequence = header.SequenceNumber + (uint)packets[i].Length - header.DataOffset;
+					_NextSequence = header.SequenceNumber + (uint)t.Length - header.DataOffset;
 
 					// if PUSH flag is set, return data immedately.
 					// Note: data in the TCP stream can be processed without the PSH flag set, the application must interpret the stream data.
@@ -169,19 +167,14 @@ public class TCPDecoder {
 				Packets.RemoveAt(i);
 		}
 
-		if (Packets.Count > 0) {
-			if (LastPacketTimestamp.AddMilliseconds(2000) < DateTime.UtcNow) {
-				Trace.WriteLine("TCPDecoder: >2 sec since last processed packet, resetting stream.", "DEBUG-MACHINA");
-
-				for (var i = Packets.Count - 1; i >= 0; i--) {
-					Trace.WriteLine($"TCPDecoder: Missing Sequence # [{_NextSequence}], Dropping packet with sequence # [" +
-					                $"{ConversionUtility.ntohl(BitConverter.ToUInt32(Packets[i], 4))}].", "DEBUG-MACHINA");
-					Packets.RemoveAt(i);
-				}
-				_NextSequence = 0;
-			}
+		if (Packets.Count <= 0 || LastPacketTimestamp.AddMilliseconds(2000) >= DateTime.UtcNow) return buffer;
+		Trace.WriteLine("TCPDecoder: >2 sec since last processed packet, resetting stream.", "DEBUG-MACHINA");
+		for (var i = Packets.Count - 1; i >= 0; i--) {
+			Trace.WriteLine($"TCPDecoder: Missing Sequence # [{_NextSequence}], Dropping packet with sequence # [" +
+			                $"{ConversionUtility.ntohl(BitConverter.ToUInt32(Packets[i], 4))}].", "DEBUG-MACHINA");
+			Packets.RemoveAt(i);
 		}
-
+		_NextSequence = 0;
 		return buffer;
 	}
 }

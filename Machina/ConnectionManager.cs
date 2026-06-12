@@ -63,16 +63,15 @@ public class ConnectionManager : IDisposable {
 	}
 
 	public void Cleanup() {
-		for (var i = 0; i < Connections.Count; i++) {
-			if (Connections[i].Socket != null) {
-				Trace.WriteLine("TCPNetworkMonitor: Stopping " + Config.MonitorType + " listener between [" +
-				                new IPAddress(Connections[i].LocalIP) + "] => [" +
-				                new IPAddress(Connections[i].RemoteIP) + "].", "DEBUG-MACHINA");
+		foreach (var t in Connections) {
+			if (t.Socket == null) continue;
+			Trace.WriteLine("TCPNetworkMonitor: Stopping " + Config.MonitorType + " listener between [" +
+			                new IPAddress(t.LocalIP) + "] => [" +
+			                new IPAddress(t.RemoteIP) + "].", "DEBUG-MACHINA");
 
-				Connections[i].Socket.StopCapture();
-				Connections[i].Socket?.Dispose();
-				Connections[i].Socket = null;
-			}
+			t.Socket.StopCapture();
+			t.Socket?.Dispose();
+			t.Socket = null;
 		}
 
 		Connections.Clear();
@@ -81,19 +80,18 @@ public class ConnectionManager : IDisposable {
 	#region IDisposable
 
 	protected virtual void Dispose(bool disposing) {
-		if (!_disposedValue) {
-			if (disposing) {
-				for (var i = 0; i < Connections.Count; i++) {
-					// Note: Do not call Trace in Dispose()
-					Connections[i].Socket?.StopCapture();
-					Connections[i].Socket?.Dispose();
-					Connections[i].Socket = null;
-				}
-				Connections.Clear();
+		if (_disposedValue) return;
+		if (disposing) {
+			foreach (var t in Connections) {
+				// Note: Do not call Trace in Dispose()
+				t.Socket?.StopCapture();
+				t.Socket?.Dispose();
+				t.Socket = null;
 			}
-
-			_disposedValue = true;
+			Connections.Clear();
 		}
+
+		_disposedValue = true;
 	}
 
 	public void Dispose() {
