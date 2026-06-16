@@ -28,7 +28,7 @@ public static class OodleFactory {
 			_oodleImplementation = implementation;
 
 			// Note: Do not re-initialize if not changing implementation type.
-			if (implementation == OodleImplementation.LibraryTcp || implementation == OodleImplementation.LibraryUdp) {
+			if (implementation is OodleImplementation.LibraryTcp or OodleImplementation.LibraryUdp) {
 				if (_oodleNative is not OodleNative_Library)
 					_oodleNative?.UnInitialize();
 				else
@@ -55,7 +55,7 @@ public static class OodleFactory {
 			if (_oodleNative is null)
 				return null;
 
-			if (_oodleImplementation == OodleImplementation.FfxivTcp || _oodleImplementation == OodleImplementation.LibraryTcp || _oodleImplementation == OodleImplementation.KoreanFfxivUdp)
+			if (_oodleImplementation is OodleImplementation.FfxivTcp or OodleImplementation.LibraryTcp or OodleImplementation.KoreanFfxivUdp)
 				return new OodleTCPWrapper(_oodleNative);
 			return new OodleUDPWrapper(_oodleNative);
 		}

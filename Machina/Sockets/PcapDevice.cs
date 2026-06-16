@@ -52,7 +52,7 @@ internal class PcapDevice {
 
 					if (address.addr != IntPtr.Zero) {
 						var sockaddress = *(sockaddr_in*)address.addr;
-						if (sockaddress.sin_family == AF_INET || sockaddress.sin_family == AF_INET_BSD)
+						if (sockaddress.sin_family is AF_INET or AF_INET_BSD)
 							device.Addresses.Add(sockaddress.sin_addr);
 					}
 
