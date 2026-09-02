@@ -65,7 +65,9 @@ public class OpcodeManager {
 		return dict;
 	}
 
-	public void SetRegion(GameRegion region) => SetRegion(region, null);
+	//防止被解析插件替换
+	public void SetRegion(GameRegion region) { }
+	// SetRegion(region, null);
 
 	public void SetRegion(GameRegion region, Dictionary<string, ushort> extraOpcodes) {
 		if (!_opcodes.ContainsKey(region))
