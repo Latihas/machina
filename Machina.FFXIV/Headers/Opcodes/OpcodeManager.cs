@@ -44,7 +44,7 @@ public class OpcodeManager {
 			var regionString = resource.Substring(resource.IndexOf(".Opcodes.", StringComparison.InvariantCulture) + 9, resource.LastIndexOf('.') - resource.IndexOf(".Opcodes.", StringComparison.InvariantCulture) - 9);
 			if (!Enum.TryParse(regionString, out GameRegion gameRegion))
 				continue;
-			using var stream = assembly.GetManifestResourceStream(resource);
+			using var stream = assembly.GetManifestResourceStream(resource)!;
 			using StreamReader sr = new(stream);
 			_opcodes[gameRegion] = ConvertOpCode(sr.ReadToEnd());
 		}

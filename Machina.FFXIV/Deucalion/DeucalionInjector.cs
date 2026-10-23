@@ -133,12 +133,12 @@ public static class DeucalionInjector {
 	/// <summary>
 	///     returns the expected Deucalion file name based on the Game Region
 	/// </summary>
-	public static string DeucalionFileName =>  "deucalion-1.5.0.dll";
+	public static string DeucalionFileName => "deucalion-1.5.0.dll";
 
 	/// <summary>
 	///     Minimum version of Deucalion supported by Machina
 	/// </summary>
-	public static Version DeucalionVersion => new (1, 5, 0);
+	public static Version DeucalionVersion => new(1, 5, 0);
 
 	/// <summary>
 	///     Stores the folder where Deucalion should be loaded from
