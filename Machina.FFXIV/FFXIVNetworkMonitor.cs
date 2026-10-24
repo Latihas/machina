@@ -15,6 +15,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using Machina.FFXIV.Dalamud;
 using Machina.FFXIV.Deucalion;
@@ -33,6 +34,7 @@ namespace Machina.FFXIV;
 ///     It decodes the data thaat adheres to the
 ///     FFXIV network packet format and calls the message delegate when data is received.
 /// </summary>
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public class FFXIVNetworkMonitor : IDisposable {
 	/// <summary>
 	///     Specifies the type of monitor to use - Raw socket or WinPCap
@@ -150,7 +152,7 @@ public class FFXIVNetworkMonitor : IDisposable {
 
 			// We are replacing Deucalion with Dalamud here, while leaving the Machina.FFXIV API intact
 			_dalamudClient = new DalamudClient();
-			_dalamudClient.MessageReceived = (epoch, message) => ProcessDalamudMessage(epoch, message);
+			_dalamudClient.MessageReceived = ProcessDalamudMessage;
 			_dalamudClient.Connect();
 		} else {
 			_monitor = new TCPNetworkMonitor();
