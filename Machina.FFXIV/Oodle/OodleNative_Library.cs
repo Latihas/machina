@@ -16,6 +16,7 @@
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace Machina.FFXIV.Oodle;
 
@@ -52,7 +53,7 @@ public class OodleNative_Library : IOodleNative {
 	private OodleNetwork1TCP_Encode_Func _OodleNetwork1TCP_Encode;
 
 	private IntPtr _libraryHandle = IntPtr.Zero;
-	private readonly object _librarylock = new();
+	private readonly Lock _librarylock = new();
 
 	public bool Initialized { get; set; }
 

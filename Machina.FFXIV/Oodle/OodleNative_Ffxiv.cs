@@ -18,11 +18,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Threading;
 using Machina.FFXIV.Memory;
 
 namespace Machina.FFXIV.Oodle;
 
-public class OodleNative_Ffxiv : IOodleNative {
+public class OodleNative_Ffxiv(ISigScan sigscan) : IOodleNative {
 	private delegate int OodleNetwork1UDP_State_Size_Func();
 
 	private delegate int OodleNetwork1TCP_State_Size_Func();
@@ -63,12 +64,6 @@ public class OodleNative_Ffxiv : IOodleNative {
 	private OodleMalloc_Func _OodleMalloc;
 	private OodleFree_Action _OodleFree;
 
-	private readonly ISigScan _sigscan;
-
-	public OodleNative_Ffxiv(ISigScan sigscan) {
-		_sigscan = sigscan;
-	}
-
 	private static unsafe IntPtr AllocAlignedMemory(IntPtr cb, int alignment) {
 		// copied from https://github.com/dotnet/runtime/issues/33244#issuecomment-595848832
 		if (alignment % 1 != 0)
@@ -91,7 +86,7 @@ public class OodleNative_Ffxiv : IOodleNative {
 	}
 
 	private IntPtr _libraryHandle = IntPtr.Zero;
-	private readonly object _librarylock = new();
+	private readonly Lock _librarylock = new();
 	private string _libraryTempPath = string.Empty;
 
 	public bool Initialized { get; set; }
@@ -122,7 +117,7 @@ public class OodleNative_Ffxiv : IOodleNative {
 				}
 				Trace.WriteLine($"{nameof(OodleNative_Ffxiv)}: Copied and loaded ffxiv_dx11 executable into ACT memory from path {path}.", "DEBUG-MACHINA");
 
-				_offsets = _sigscan.Read(_libraryHandle);
+				_offsets = sigscan.Read(_libraryHandle);
 
 				_OodleMalloc = AllocAlignedMemory;
 				_OodleFree = FreeAlignedMemory;
