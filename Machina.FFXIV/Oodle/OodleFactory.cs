@@ -13,6 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see<http://www.gnu.org/licenses/>.
 
+using System.Threading;
 using Machina.FFXIV.Memory;
 
 namespace Machina.FFXIV.Oodle;
@@ -21,7 +22,7 @@ public static class OodleFactory {
 	private static IOodleNative _oodleNative;
 	private static OodleImplementation _oodleImplementation;
 
-	private static readonly object _lock = new();
+	private static readonly Lock _lock = new();
 
 	public static void SetImplementation(OodleImplementation implementation, string path) {
 		lock (_lock) {
