@@ -67,7 +67,7 @@ public class SigScan : ISigScan {
 
 	public unsafe Dictionary<SignatureType, int> Read(IntPtr library) {
 		Dictionary<SignatureType, int> ret = new();
-		List<SignatureType> signatureTypes = new(Enum.GetValues<SignatureType>());
+		List<SignatureType> signatureTypes = [.. Enum.GetValues<SignatureType>()];
 
 		NativeMethods.MODULEINFO info = new();
 		if (!NativeMethods.GetModuleInformation(Process.GetCurrentProcess().Handle, library, out info, (uint)sizeof(NativeMethods.MODULEINFO))) {

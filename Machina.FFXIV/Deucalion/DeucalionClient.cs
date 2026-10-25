@@ -306,7 +306,7 @@ public class DeucalionClient : IDisposable {
 			Trace.WriteLine($"DeucalionClient: ReaderTask did not complete.  Exception: {readerTask.Exception}", "DEBUG-MACHINA");
 		}
 		if (read == 0)
-			return response.ToArray();
+			return [.. response];
 
 		// for debugging: Trace.WriteLine($"DeucalionClient: Received {Infrastructure.ConversionUtility.ByteArrayToHexString(buffer, 0, read)}");
 
@@ -315,7 +315,7 @@ public class DeucalionClient : IDisposable {
 			// buffer is full, but length suggests more data needed.  Reset stream.
 			Trace.WriteLine("DeucalionClient: Stream Buffer is full.  Discarding data and resetting stream.", "DEBUG-MACHINA");
 			_streamBufferIndex = 0;
-			return response.ToArray();
+			return [.. response];
 		}
 
 		// copy data to stream buffer
@@ -400,7 +400,7 @@ public class DeucalionClient : IDisposable {
 			_streamBufferIndex -= index;
 		}
 
-		return response.ToArray();
+		return [.. response];
 	}
 
 

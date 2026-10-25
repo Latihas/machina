@@ -167,11 +167,13 @@ public class IPDecoder {
 		// optimize single packet processing
 		var nextFragments = Fragments.Count == 1
 			? Fragments
-			: Fragments.OrderBy(x =>
-					ConversionUtility.ntohs(BitConverter.ToUInt16(x, 4))) // identification
-				.ThenBy(x =>
-					ConversionUtility.ntohs(BitConverter.ToUInt16(x, 6)) & 0x1fff) // fragment offset
-				.ToList();
+			: [
+				.. Fragments.OrderBy(x =>
+						ConversionUtility.ntohs(BitConverter.ToUInt16(x, 4))) // identification
+					.ThenBy(x =>
+						ConversionUtility.ntohs(BitConverter.ToUInt16(x, 6)) & 0x1fff) // fragment offset
+
+			];
 
 		ushort currentId = 0;
 		ushort fragmentOffset = 0;
